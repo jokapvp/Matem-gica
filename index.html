@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matemagica - Aprendendo Matemática de Forma Divertida</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Tela Inicial -->
+        <div id="home-screen" class="screen active">
+            <div class="container">
+                <!-- Header com logo -->
+                <div class="header">
+                    <img src="assets/logo-matemagica.png" alt="Matemagica" class="logo">
+                    <h1 class="title">Matemagica</h1>
+                    <p class="subtitle">Aprendendo matemática de forma divertida!</p>
+                </div>
+
+                <!-- Mascote -->
+                <div class="mascot-section">
+                    <img src="assets/mascote-principal.png" alt="Mascote" class="mascot bounce">
+                    <div class="speech-bubble">
+                        <p class="speech-text">Olá! Eu sou o Mago dos Números!</p>
+                        <p class="speech-subtext">Vamos aprender matemática juntos?</p>
+                    </div>
+                </div>
+
+                <!-- Status do jogador -->
+                <div class="player-status">
+                    <div class="status-item">
+                        <span class="star-icon">⭐</span>
+                        <span class="status-text">Pontos: <span id="score">0</span></span>
+                    </div>
+                    <div class="status-item">
+                        <span class="trophy-icon">🏆</span>
+                        <span class="status-text">Nível: <span id="level">1</span></span>
+                    </div>
+                </div>
+
+                <!-- Menu de jogos -->
+                <div class="games-menu">
+                    <div class="game-button addition-game" onclick="startGame('addition')">
+                        <img src="assets/icone-adicao.png" alt="Adição" class="game-icon">
+                        <div class="game-info">
+                            <h3 class="game-title">Adição Mágica</h3>
+                            <p class="game-description">Some números e ganhe estrelas!</p>
+                        </div>
+                        <span class="plus-icon">+</span>
+                    </div>
+                    
+                    <div class="game-button subtraction-game" onclick="startGame('subtraction')">
+                        <img src="assets/icone-subtracao.png" alt="Subtração" class="game-icon">
+                        <div class="game-info">
+                            <h3 class="game-title">Subtração Aventura</h3>
+                            <p class="game-description">Descubra o resultado das subtrações!</p>
+                        </div>
+                        <span class="plus-icon">+</span>
+                    </div>
+                    
+                    <div class="game-button multiplication-game" onclick="startGame('multiplication')">
+                        <img src="assets/icone-multiplicacao.png" alt="Multiplicação" class="game-icon">
+                        <div class="game-info">
+                            <h3 class="game-title">Multiplicação Mistério</h3>
+                            <p class="game-description">Desvende os segredos da multiplicação!</p>
+                        </div>
+                        <span class="plus-icon">+</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tela de Jogo de Adição -->
+        <div id="addition-screen" class="screen game-screen addition-bg">
+            <div class="container">
+                <!-- Header do jogo -->
+                <div class="game-header">
+                    <button class="home-btn" onclick="goHome()">🏠</button>
+                    <h2 class="game-screen-title">Adição Mágica</h2>
+                    <div class="score-display">
+                        <span class="star-icon">⭐</span>
+                        <span id="addition-score">0</span>
+                    </div>
+                </div>
+
+                <!-- Mascote do jogo -->
+                <div class="game-mascot">
+                    <img src="assets/mascote-principal.png" alt="Mascote" class="mascot-small">
+                </div>
+
+                <!-- Problema matemático -->
+                <div class="math-problem">
+                    <div class="problem-text">
+                        <span id="addition-num1">0</span> + <span id="addition-num2">0</span> = ?
+                    </div>
+                    <input type="number" id="addition-answer" class="answer-input" placeholder="?">
+                </div>
+
+                <!-- Feedback -->
+                <div id="addition-feedback" class="feedback hidden"></div>
+
+                <!-- Botões -->
+                <div class="game-buttons">
+                    <button id="addition-check" class="check-btn" onclick="checkAnswer('addition')">
+                        Verificar Resposta
+                    </button>
+                    <button id="addition-continue" class="continue-btn hidden" onclick="nextProblem('addition')">
+                        Continuar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tela de Jogo de Subtração -->
+        <div id="subtraction-screen" class="screen game-screen subtraction-bg">
+            <div class="container">
+                <!-- Header do jogo -->
+                <div class="game-header">
+                    <button class="home-btn" onclick="goHome()">🏠</button>
+                    <h2 class="game-screen-title">Subtração Aventura</h2>
+                    <div class="score-display">
+                        <span class="star-icon">⭐</span>
+                        <span id="subtraction-score">0</span>
+                    </div>
+                </div>
+
+                <!-- Mascote do jogo -->
+                <div class="game-mascot">
+                    <img src="assets/mascote-principal.png" alt="Mascote" class="mascot-small">
+                </div>
+
+                <!-- Problema matemático -->
+                <div class="math-problem">
+                    <div class="problem-text">
+                        <span id="subtraction-num1">0</span> - <span id="subtraction-num2">0</span> = ?
+                    </div>
+                    <input type="number" id="subtraction-answer" class="answer-input" placeholder="?">
+                </div>
+
+                <!-- Feedback -->
+                <div id="subtraction-feedback" class="feedback hidden"></div>
+
+                <!-- Botões -->
+                <div class="game-buttons">
+                    <button id="subtraction-check" class="check-btn" onclick="checkAnswer('subtraction')">
+                        Verificar Resposta
+                    </button>
+                    <button id="subtraction-continue" class="continue-btn hidden" onclick="nextProblem('subtraction')">
+                        Continuar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tela de Jogo de Multiplicação -->
+        <div id="multiplication-screen" class="screen game-screen multiplication-bg">
+            <div class="container">
+                <!-- Header do jogo -->
+                <div class="game-header">
+                    <button class="home-btn" onclick="goHome()">🏠</button>
+                    <h2 class="game-screen-title">Multiplicação Mistério</h2>
+                    <div class="score-display">
+                        <span class="star-icon">⭐</span>
+                        <span id="multiplication-score">0</span>
+                    </div>
+                </div>
+
+                <!-- Mascote do jogo -->
+                <div class="game-mascot">
+                    <img src="assets/mascote-principal.png" alt="Mascote" class="mascot-small">
+                </div>
+
+                <!-- Problema matemático -->
+                <div class="math-problem">
+                    <div class="problem-text">
+                        <span id="multiplication-num1">0</span> × <span id="multiplication-num2">0</span> = ?
+                    </div>
+                    <input type="number" id="multiplication-answer" class="answer-input" placeholder="?">
+                </div>
+
+                <!-- Feedback -->
+                <div id="multiplication-feedback" class="feedback hidden"></div>
+
+                <!-- Botões -->
+                <div class="game-buttons">
+                    <button id="multiplication-check" class="check-btn" onclick="checkAnswer('multiplication')">
+                        Verificar Resposta
+                    </button>
+                    <button id="multiplication-continue" class="continue-btn hidden" onclick="nextProblem('multiplication')">
+                        Continuar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
