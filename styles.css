@@ -486,3 +486,545 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
+
+/* ===== ESTILOS DE CADASTRO ===== */
+
+/* Formulário de Cadastro */
+.register-form {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.form-select {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.9);
+    font-size: 16px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 600;
+    color: #333;
+    transition: all 0.3s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: #FFD700;
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.form-select option {
+    background: white;
+    color: #333;
+    padding: 10px;
+}
+
+/* Mensagens de erro e sucesso do cadastro */
+.register-error {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 15px;
+    margin: 15px 0;
+    text-align: center;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+    animation: shake 0.5s ease-in-out;
+}
+
+.register-success {
+    background: linear-gradient(135deg, #51cf66, #40c057);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 15px;
+    margin: 15px 0;
+    text-align: center;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(81, 207, 102, 0.3);
+    animation: slideInDown 0.5s ease-out;
+}
+
+/* Botão de cadastro */
+.register-btn {
+    width: 100%;
+    padding: 18px 30px;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    border: none;
+    border-radius: 15px;
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(255, 165, 0, 0.4);
+    margin-top: 20px;
+}
+
+.register-btn:hover {
+    background: linear-gradient(135deg, #FFA500, #FF8C00);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 140, 0, 0.5);
+}
+
+.register-btn:active {
+    transform: translateY(-1px);
+}
+
+/* Links de navegação entre login e cadastro */
+.register-link, .login-link {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.register-text, .login-text {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.register-link-btn, .login-link-btn {
+    background: none;
+    border: none;
+    color: #FFD700;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: underline;
+    transition: all 0.3s ease;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.register-link-btn:hover, .login-link-btn:hover {
+    color: #FFA500;
+    background: rgba(255, 215, 0, 0.1);
+    text-decoration: none;
+    transform: scale(1.05);
+}
+
+/* Validação visual dos campos */
+.form-input.invalid, .form-select.invalid {
+    border-color: #ff6b6b;
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.3);
+    animation: shake 0.3s ease-in-out;
+}
+
+.form-input.valid, .form-select.valid {
+    border-color: #51cf66;
+    box-shadow: 0 0 0 3px rgba(81, 207, 102, 0.3);
+}
+
+/* Animações específicas do cadastro */
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsividade para cadastro */
+@media (max-width: 768px) {
+    .register-form {
+        padding: 20px;
+        margin: 15px 0;
+    }
+    
+    .form-select {
+        padding: 12px 15px;
+        font-size: 14px;
+    }
+    
+    .register-btn {
+        padding: 15px 25px;
+        font-size: 16px;
+    }
+    
+    .register-text, .login-text {
+        font-size: 14px;
+    }
+    
+    .register-link-btn, .login-link-btn {
+        font-size: 14px;
+    }
+}
+
+/* Estados de carregamento para cadastro */
+.register-btn.loading {
+    background: linear-gradient(135deg, #ccc, #999);
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.register-btn.loading::after {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border: 2px solid transparent;
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    margin-left: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+
+/* ===== SISTEMA DE TOAST ===== */
+
+/* Container de Toast */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+/* Toast Base */
+.toast {
+    min-width: 300px;
+    max-width: 400px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+    pointer-events: auto;
+    cursor: pointer;
+    transform: translateX(100%);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Toast Visível */
+.toast.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+/* Toast Saindo */
+.toast.hide {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+/* Tipos de Toast */
+.toast.success {
+    background: linear-gradient(135deg, #51cf66, #40c057);
+    border-left: 4px solid #2b8a3e;
+}
+
+.toast.error {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+    border-left: 4px solid #c92a2a;
+}
+
+.toast.warning {
+    background: linear-gradient(135deg, #ffd43b, #fab005);
+    border-left: 4px solid #f08c00;
+    color: #333;
+}
+
+.toast.info {
+    background: linear-gradient(135deg, #339af0, #228be6);
+    border-left: 4px solid #1971c2;
+}
+
+/* Conteúdo do Toast */
+.toast-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.toast-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.toast-message {
+    flex: 1;
+    line-height: 1.4;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 8px;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    flex-shrink: 0;
+}
+
+.toast-close:hover {
+    opacity: 1;
+}
+
+/* Barra de Progresso */
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 0 0 12px 12px;
+    transform-origin: left;
+    animation: toastProgress 4s linear forwards;
+}
+
+.toast.success .toast-progress {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.toast.error .toast-progress {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.toast.warning .toast-progress {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.toast.info .toast-progress {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* Animação da Barra de Progresso */
+@keyframes toastProgress {
+    from {
+        transform: scaleX(1);
+    }
+    to {
+        transform: scaleX(0);
+    }
+}
+
+/* Efeitos Hover */
+.toast:hover {
+    transform: translateX(-5px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.toast:hover .toast-progress {
+    animation-play-state: paused;
+}
+
+/* Responsividade para Toast */
+@media (max-width: 768px) {
+    .toast-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        align-items: stretch;
+    }
+    
+    .toast {
+        min-width: auto;
+        max-width: none;
+        width: 100%;
+        font-size: 13px;
+        padding: 14px 16px;
+    }
+    
+    .toast-icon {
+        font-size: 18px;
+    }
+}
+
+/* Animações de Entrada Alternativas */
+.toast.slide-in {
+    animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.toast.slide-out {
+    animation: slideOutRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Toast com Ícones Específicos */
+.toast.success .toast-icon::before {
+    content: '✅';
+}
+
+.toast.error .toast-icon::before {
+    content: '❌';
+}
+
+.toast.warning .toast-icon::before {
+    content: '⚠️';
+}
+
+.toast.info .toast-icon::before {
+    content: 'ℹ️';
+}
+
+/* Estados de Interação */
+.toast:active {
+    transform: translateX(-5px) scale(0.98);
+}
+
+/* Múltiplos Toasts */
+.toast:nth-child(1) {
+    z-index: 10000;
+}
+
+.toast:nth-child(2) {
+    z-index: 9999;
+    transform: translateX(95%) scale(0.95);
+    opacity: 0.8;
+}
+
+.toast:nth-child(3) {
+    z-index: 9998;
+    transform: translateX(90%) scale(0.9);
+    opacity: 0.6;
+}
+
+.toast:nth-child(n+4) {
+    display: none;
+}
+
+/* Efeito de Empilhamento */
+.toast-container:hover .toast:nth-child(2) {
+    transform: translateX(0) scale(0.95);
+    opacity: 0.9;
+}
+
+.toast-container:hover .toast:nth-child(3) {
+    transform: translateX(0) scale(0.9);
+    opacity: 0.8;
+}
+
+/* Tema Matemagica para Toasts */
+.toast.matemagica {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #333;
+    border-left: 4px solid #FF8C00;
+}
+
+.toast.matemagica .toast-icon::before {
+    content: '🎯';
+}
+
+.toast.matemagica .toast-progress {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* Toasts para Jogos Específicos */
+.toast.addition {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #333;
+    border-left: 4px solid #FF8C00;
+}
+
+.toast.subtraction {
+    background: linear-gradient(135deg, #9775fa, #845ef7);
+    color: white;
+    border-left: 4px solid #7048e8;
+}
+
+.toast.multiplication {
+    background: linear-gradient(135deg, #51cf66, #40c057);
+    color: white;
+    border-left: 4px solid #2b8a3e;
+}
+
+/* Efeitos Especiais */
+.toast.celebration {
+    animation: celebration 0.6s ease-in-out;
+}
+
+@keyframes celebration {
+    0%, 100% {
+        transform: translateX(0) rotate(0deg);
+    }
+    25% {
+        transform: translateX(-5px) rotate(-2deg);
+    }
+    75% {
+        transform: translateX(5px) rotate(2deg);
+    }
+}
+
+/* Acessibilidade */
+.toast:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+}
+
+/* Redução de movimento para usuários sensíveis */
+@media (prefers-reduced-motion: reduce) {
+    .toast {
+        transition: opacity 0.2s ease;
+        animation: none;
+    }
+    
+    .toast.show {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    
+    .toast.hide {
+        opacity: 0;
+    }
+    
+    .toast-progress {
+        animation: none;
+    }
+}
+

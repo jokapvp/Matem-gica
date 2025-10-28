@@ -5,28 +5,167 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Matemagica - Aprendendo Matemática de Forma Divertida</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="login-styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="app">
-        <!-- Tela Inicial -->
-        <div id="home-screen" class="screen active">
-            <div class="container">
+        <!-- Container de Toast -->
+        <div id="toast-container" class="toast-container"></div>
+        
+        <!-- Tela de Login -->
+        <div id="login-screen" class="screen active auth-screen">
+            <div class="container auth-container">
                 <!-- Header com logo -->
-                <div class="header">
-                    <img src="assets/logo-matemagica.png" alt="Matemagica" class="logo">
+                <div class="header auth-header">
+                    <img src="assets/logo-matemagica.png" alt="Matemagica" class="logo auth-logo">
+                    <h1 class="title">Matemagica</h1>
+                    <p class="subtitle">Faça login para começar a diversão!</p>
+                </div>
+
+                <!-- Mascote -->
+                <div class="mascot-section auth-mascot-section">
+                    <img src="assets/mascote-principal.png" alt="Mascote" class="mascot bounce auth-mascot">
+                    <div class="speech-bubble auth-speech-bubble">
+                        <p class="speech-text auth-speech-text">Olá! Entre com suas credenciais!</p>
+                        <p class="speech-subtext auth-speech-subtext">Vamos aprender matemática juntos?</p>
+                    </div>
+                </div>
+
+                <!-- Formulário de Login -->
+                <div class="login-form auth-form">
+                    <div class="form-group auth-form-group">
+                        <label for="username" class="form-label auth-form-label">👤 Usuário</label>
+                        <input type="text" id="username" class="form-input auth-form-input" placeholder="Digite seu usuário" required>
+                    </div>
+                    
+                    <div class="form-group auth-form-group">
+                        <label for="password" class="form-label auth-form-label">🔒 Senha</label>
+                        <input type="password" id="password" class="form-input auth-form-input" placeholder="Digite sua senha" required>
+                    </div>
+                    
+                    <div id="login-error" class="login-error hidden auth-error">
+                        ❌ Usuário ou senha incorretos!
+                    </div>
+                    
+                    <button id="login-btn" class="login-btn auth-btn" onclick="performLogin()">
+                        🚀 Entrar no Matemagica
+                    </button>
+                </div>
+
+                <!-- Dica de login -->
+                <div class="login-hint auth-login-hint">
+                    <p class="hint-text auth-link-text">💡 Dica: Use <strong>admin</strong> e senha <strong>123456</strong></p>
+                </div>
+
+                <!-- Link para cadastro -->
+                <div class="register-link auth-link">
+                    <p class="register-text auth-link-text">Não tem uma conta? 
+                        <button class="register-link-btn auth-link-btn" onclick="showRegisterScreen()">
+                            ✨ Cadastre-se aqui
+                        </button>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tela de Cadastro -->
+        <div id="register-screen" class="screen auth-screen">
+            <div class="container auth-container">
+                <!-- Header com logo -->
+                <div class="header auth-header">
+                    <img src="assets/logo-matemagica.png" alt="Matemagica" class="logo auth-logo">
+                    <h1 class="title">Matemagica</h1>
+                    <p class="subtitle">Crie sua conta para começar a diversão!</p>
+                </div>
+
+                <!-- Mascote de cadastro -->
+                <div class="mascot-section auth-mascot-section">
+                    <img src="assets/mascote-principal.png" alt="Mascote" class="mascot bounce auth-mascot">
+                    <div class="speech-bubble auth-speech-bubble">
+                        <p class="speech-text auth-speech-text">Vamos criar sua conta!</p>
+                        <p class="speech-subtext auth-speech-subtext">É rápido e fácil!</p>
+                    </div>
+                </div>
+
+                <!-- Formulário de Cadastro -->
+                <div class="register-form auth-form">
+                    <div class="form-group auth-form-group">
+                        <label for="register-username" class="form-label auth-form-label">👤 Usuário</label>
+                        <input type="text" id="register-username" class="form-input auth-form-input" placeholder="Escolha um nome de usuário" required>
+                    </div>
+                    
+                    <div class="form-group auth-form-group">
+                        <label for="register-password" class="form-label auth-form-label">🔒 Senha</label>
+                        <input type="password" id="register-password" class="form-input auth-form-input" placeholder="Crie uma senha" required>
+                    </div>
+                    
+                    <div class="form-group auth-form-group">
+                        <label for="register-confirm-password" class="form-label auth-form-label">🔒 Confirmar Senha</label>
+                        <input type="password" id="register-confirm-password" class="form-input auth-form-input" placeholder="Digite a senha novamente" required>
+                    </div>
+
+                    <div class="form-group auth-form-group">
+                        <label for="register-profile" class="form-label auth-form-label">🎭 Perfil</label>
+                        <select id="register-profile" class="form-select auth-form-select" required>
+                            <option value="">Selecione seu perfil</option>
+                            <option value="crianca">🧒 Criança</option>
+                            <option value="professor">👨‍🏫 Professor(a)</option>
+                            <option value="pai">👨‍👩‍👧‍👦 Responsável</option>
+                        </select>
+                    </div>
+                    
+                    <div id="register-error" class="register-error hidden auth-error">
+                        ❌ Erro no cadastro!
+                    </div>
+                    
+                    <div id="register-success" class="register-success hidden auth-success">
+                        ✅ Conta criada com sucesso!
+                    </div>
+                    
+                    <button id="register-btn" class="register-btn auth-btn" onclick="performRegister()">
+                        🚀 Criar Conta
+                    </button>
+                </div>
+
+                <!-- Link para voltar ao login -->
+                <div class="login-link auth-link">
+                    <p class="login-text auth-link-text">Já tem uma conta? 
+                        <button class="login-link-btn auth-link-btn" onclick="showLoginScreen()">
+                            🔑 Faça login aqui
+                        </button>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tela Inicial -->
+        <div id="home-screen" class="screen">
+            <div class="container auth-container">
+                <!-- Header com logo -->
+                <div class="header auth-header">
+                    <img src="assets/logo-matemagica.png" alt="Matemagica" class="logo auth-logo">
                     <h1 class="title">Matemagica</h1>
                     <p class="subtitle">Aprendendo matemática de forma divertida!</p>
                 </div>
 
+                <!-- Barra de usuário -->
+                <div class="user-bar">
+                    <div class="user-info">
+                        <span class="user-icon">👤</span>
+                        <span id="current-user" class="user-name">Administrador</span>
+                    </div>
+                    <button class="logout-btn" onclick="performLogout()">🚪 Sair</button>
+                </div>
+
                 <!-- Mascote -->
-                <div class="mascot-section">
-                    <img src="assets/mascote-principal.png" alt="Mascote" class="mascot bounce">
-                    <div class="speech-bubble">
-                        <p class="speech-text">Olá! Eu sou o Mago dos Números!</p>
-                        <p class="speech-subtext">Vamos aprender matemática juntos?</p>
+                <div class="mascot-section auth-mascot-section">
+                    <img src="assets/mascote-principal.png" alt="Mascote" class="mascot bounce auth-mascot">
+                    <div class="speech-bubble auth-speech-bubble">
+                        <p class="speech-text auth-speech-text">Olá! Eu sou o Mago dos Números!</p>
+                        <p class="speech-subtext auth-speech-subtext">Vamos aprender matemática juntos?</p>
                     </div>
                 </div>
 
@@ -76,7 +215,7 @@
 
         <!-- Tela de Jogo de Adição -->
         <div id="addition-screen" class="screen game-screen addition-bg">
-            <div class="container">
+            <div class="container auth-container">
                 <!-- Header do jogo -->
                 <div class="game-header">
                     <button class="home-btn" onclick="goHome()">🏠</button>
@@ -117,7 +256,7 @@
 
         <!-- Tela de Jogo de Subtração -->
         <div id="subtraction-screen" class="screen game-screen subtraction-bg">
-            <div class="container">
+            <div class="container auth-container">
                 <!-- Header do jogo -->
                 <div class="game-header">
                     <button class="home-btn" onclick="goHome()">🏠</button>
@@ -158,7 +297,7 @@
 
         <!-- Tela de Jogo de Multiplicação -->
         <div id="multiplication-screen" class="screen game-screen multiplication-bg">
-            <div class="container">
+            <div class="container auth-container">
                 <!-- Header do jogo -->
                 <div class="game-header">
                     <button class="home-btn" onclick="goHome()">🏠</button>

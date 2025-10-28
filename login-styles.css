@@ -1,0 +1,405 @@
+/* Estilos para a nova tela de login do Matemagica */
+
+/* Estilos Comuns para Telas de Autenticação (Login e Cadastro) */
+.auth-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 25px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    padding: 40px;
+    max-width: 450px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+    animation: fadeInScale 0.8s ease-out;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.auth-header .title {
+    color: #333;
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.auth-header .subtitle {
+    color: #666;
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+.auth-logo {
+    width: 150px;
+    height: 150px;
+    margin-bottom: 20px;
+}
+
+.auth-mascot-section {
+    margin-bottom: 30px;
+}
+
+.auth-mascot {
+    width: 130px;
+    height: 130px;
+    margin-bottom: 15px;
+}
+
+.auth-speech-bubble {
+    border-radius: 20px;
+    padding: 15px 20px;
+    margin-top: 15px;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.auth-speech-bubble::before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    position: absolute;
+    bottom: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.auth-speech-bubble::after {
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 13px solid transparent;
+    border-right: 13px solid transparent;
+    position: absolute;
+    bottom: -13px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.auth-speech-text {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.auth-speech-subtext {
+    font-size: 0.95rem;
+}
+
+.auth-form {
+    margin-top: 30px;
+}
+
+.auth-form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.auth-form-label {
+    color: #555;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+    font-size: 1rem;
+}
+
+.auth-form-input, .auth-form-select {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    color: #333;
+    background-color: #f9f9f9;
+    transition: all 0.3s ease;
+}
+
+.auth-form-input::placeholder {
+    color: #aaa;
+}
+
+.auth-form-input:focus, .auth-form-select:focus {
+    border-color: #FF6B6B;
+    box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.2);
+    outline: none;
+    background-color: #fff;
+}
+
+.auth-error, .auth-success {
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: -10px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.auth-error {
+    color: #D8000C;
+    background-color: #FFD2D2;
+    border: 1px solid #D8000C;
+}
+
+.auth-success {
+    color: #28a745;
+    background-color: #d4edda;
+    border: 1px solid #28a745;
+}
+
+.auth-btn {
+    color: white;
+    border: none;
+    border-radius: 15px;
+    padding: 18px 30px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.auth-btn:hover {
+    transform: translateY(-3px);
+}
+
+.auth-btn:active {
+    transform: translateY(0);
+}
+
+.auth-link-text {
+    color: #666;
+    font-size: 1rem;
+}
+
+.auth-link-btn {
+    background: none;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+/* Elementos de fundo decorativos */
+.auth-screen::before, .auth-screen::after {
+    content: '';
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    filter: blur(50px);
+    opacity: 0.7;
+}
+
+.auth-screen::before {
+    width: 200px;
+    height: 200px;
+    top: -50px;
+    left: -50px;
+    animation: float1 10s infinite ease-in-out;
+}
+
+.auth-screen::after {
+    width: 250px;
+    height: 250px;
+    bottom: -70px;
+    right: -70px;
+    animation: float2 12s infinite ease-in-out;
+}
+
+@keyframes float1 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(20px, 30px); }
+}
+
+@keyframes float2 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-30px, -20px); }
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 480px) {
+    .auth-container {
+        padding: 30px 20px;
+        margin: 10px;
+    }
+
+    .auth-header .title {
+        font-size: 2.2rem;
+    }
+
+    .auth-header .subtitle {
+        font-size: 1rem;
+    }
+
+    .auth-logo {
+        width: 120px;
+        height: 120px;
+    }
+
+    .auth-mascot {
+        width: 100px;
+        height: 100px;
+    }
+
+    .auth-speech-text {
+        font-size: 1rem;
+    }
+
+    .auth-speech-subtext {
+        font-size: 0.85rem;
+    }
+
+    .auth-form-label {
+        font-size: 0.9rem;
+    }
+
+    .auth-form-input, .auth-form-select {
+        padding: 12px 15px;
+        font-size: 1rem;
+    }
+
+    .auth-btn {
+        padding: 15px 20px;
+        font-size: 1.1rem;
+    }
+
+    .auth-link-text {
+        font-size: 0.85rem;
+    }
+
+    .auth-link-btn {
+        font-size: 0.9rem;
+    }
+}
+
+/* Estilos Específicos da Tela de Login */
+#login-screen {
+    background: linear-gradient(135deg, #FF6B6B 0%, #FFD166 100%);
+}
+
+#login-screen .auth-speech-bubble {
+    background: #FFD166;
+    border: 3px solid #FF6B6B;
+}
+
+#login-screen .auth-speech-bubble::before {
+    border-top: 15px solid #FF6B6B;
+}
+
+#login-screen .auth-speech-bubble::after {
+    border-top: 13px solid #FFD166;
+}
+
+#login-screen .auth-speech-text {
+    color: #333;
+}
+
+#login-screen .auth-speech-subtext {
+    color: #555;
+}
+
+#login-screen .login-btn {
+    background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%);
+    box-shadow: 0 8px 20px rgba(0, 150, 0, 0.2);
+}
+
+#login-screen .login-btn:hover {
+    box-shadow: 0 12px 25px rgba(0, 150, 0, 0.3);
+}
+
+#login-screen .login-btn:active {
+    box-shadow: 0 5px 15px rgba(0, 150, 0, 0.2);
+}
+
+#login-screen .login-hint strong {
+    color: #4CAF50;
+}
+
+#login-screen .register-link-btn {
+    color: #FF6B6B;
+}
+
+#login-screen .register-link-btn:hover {
+    color: #E65353;
+}
+
+/* Estilos Específicos da Tela de Cadastro */
+#register-screen {
+    background: linear-gradient(135deg, #FFD166 0%, #FF6B6B 100%);
+}
+
+#register-screen .auth-speech-bubble {
+    background: #FF6B6B;
+    border: 3px solid #FFD166;
+}
+
+#register-screen .auth-speech-bubble::before {
+    border-top: 15px solid #FFD166;
+}
+
+#register-screen .auth-speech-bubble::after {
+    border-top: 13px solid #FF6B6B;
+}
+
+#register-screen .auth-speech-text {
+    color: white;
+}
+
+#register-screen .auth-speech-subtext {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+#register-screen .register-btn {
+    background: linear-gradient(90deg, #1E88E5 0%, #42A5F5 100%);
+    box-shadow: 0 8px 20px rgba(0, 100, 200, 0.2);
+}
+
+#register-screen .register-btn:hover {
+    box-shadow: 0 12px 25px rgba(0, 100, 200, 0.3);
+}
+
+#register-screen .register-btn:active {
+    box-shadow: 0 5px 15px rgba(0, 100, 200, 0.2);
+}
+
+#register-screen .login-link-btn {
+    color: #1E88E5;
+}
+
+#register-screen .login-link-btn:hover {
+    color: #0D47A1;
+}
+
+#register-screen .auth-form-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13.2-5.4H18.2c-5%200-9.3%201.8-13.2%205.4A17.6%2017.6%200%200%200%200%2082.2c0%204.8%201.8%209.3%205.4%2013.2l128%20128c3.9%203.9%208.4%205.7%2013.2%205.7s9.3-1.8%2013.2-5.7l128-128c3.8-3.9%205.6-8.4%205.6-13.2%200-4.8-1.8-9.4-5.6-13.2z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 12px;
+    padding-right: 40px;
+}
