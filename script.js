@@ -1,48 +1,48 @@
 // Estado global da aplicação
-let gameState = {
-    score: 0,
-    level: 1,
-    currentScreen: 'login',
-    currentGame: null,
-    currentUser: null,
-    isAuthenticated: false,
-    problems: {
-        addition: { num1: 0, num2: 0, answer: 0 },
-        subtraction: { num1: 0, num2: 0, answer: 0 },
-        multiplication: { num1: 0, num2: 0, answer: 0 }
+let estadoJogo = {
+    pontuacao: 0,
+    nivel: 1,
+    telaAtual: 'login',
+    jogoAtual: null,
+    usuarioAtual: null,
+    estaAutenticado: false,
+    problemas: {
+        adicao: { num1: 0, num2: 0, resposta: 0 },
+        subtracao: { num1: 0, num2: 0, resposta: 0 },
+        multiplicacao: { num1: 0, num2: 0, resposta: 0 }
     }
 };
 
 // ===== SISTEMA DE TOAST =====
 
-let toastCounter = 0;
+let contadorToast = 0;
 
-function showToast(message, type = 'info', duration = 4000, gameType = null) {
-    const toastContainer = document.getElementById('toast-container');
-    if (!toastContainer) return;
+function mostrarToast(mensagem, tipo = 'info', duracao = 4000, tipoJogo = null) {
+    const containerToast = document.getElementById('toast-container');
+    if (!containerToast) return;
     
     // Criar elemento do toast
     const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.id = `toast-${++toastCounter}`;
+    toast.className = `toast ${tipo}`;
+    toast.id = `toast-${++contadorToast}`;
     
     // Adicionar classe específica do jogo se fornecida
-    if (gameType) {
-        toast.classList.add(gameType);
+    if (tipoJogo) {
+        toast.classList.add(tipoJogo);
     }
     
     // Estrutura do toast
     toast.innerHTML = `
         <div class="toast-content">
             <span class="toast-icon"></span>
-            <span class="toast-message">${message}</span>
-            <button class="toast-close" onclick="hideToast('${toast.id}')">&times;</button>
+            <span class="toast-message">${mensagem}</span>
+            <button class="toast-close" onclick="esconderToast('${toast.id}')">&times;</button>
         </div>
         <div class="toast-progress"></div>
     `;
     
     // Adicionar ao container
-    toastContainer.appendChild(toast);
+    containerToast.appendChild(toast);
     
     // Mostrar toast com animação
     setTimeout(() => {
@@ -50,36 +50,36 @@ function showToast(message, type = 'info', duration = 4000, gameType = null) {
     }, 100);
     
     // Auto-remover após duração especificada
-    const autoHideTimeout = setTimeout(() => {
-        hideToast(toast.id);
-    }, duration);
+    const timeoutAutoEsconder = setTimeout(() => {
+        esconderToast(toast.id);
+    }, duracao);
     
     // Pausar auto-hide no hover
     toast.addEventListener('mouseenter', () => {
-        clearTimeout(autoHideTimeout);
-        const progressBar = toast.querySelector('.toast-progress');
-        if (progressBar) {
-            progressBar.style.animationPlayState = 'paused';
+        clearTimeout(timeoutAutoEsconder);
+        const barraProgresso = toast.querySelector('.toast-progress');
+        if (barraProgresso) {
+            barraProgresso.style.animationPlayState = 'paused';
         }
     });
     
     // Retomar auto-hide ao sair do hover
     toast.addEventListener('mouseleave', () => {
-        const newTimeout = setTimeout(() => {
-            hideToast(toast.id);
+        const novoTempo = setTimeout(() => {
+            esconderToast(toast.id);
         }, 1000); // 1 segundo adicional após sair do hover
     });
     
     // Fechar ao clicar no toast
     toast.addEventListener('click', () => {
-        hideToast(toast.id);
+        esconderToast(toast.id);
     });
     
     return toast.id;
 }
 
-function hideToast(toastId) {
-    const toast = document.getElementById(toastId);
+function esconderToast(idToast) {
+    const toast = document.getElementById(idToast);
     if (!toast) return;
     
     toast.classList.remove('show');
@@ -93,36 +93,36 @@ function hideToast(toastId) {
     }, 400);
 }
 
-function clearAllToasts() {
-    const toastContainer = document.getElementById('toast-container');
-    if (toastContainer) {
-        toastContainer.innerHTML = '';
+function limparTodosToasts() {
+    const containerToast = document.getElementById('toast-container');
+    if (containerToast) {
+        containerToast.innerHTML = '';
     }
 }
 
 // Funções de conveniência para diferentes tipos de toast
-function showSuccessToast(message, gameType = null) {
-    return showToast(message, 'success', 3000, gameType);
+function mostrarToastSucesso(mensagem, tipoJogo = null) {
+    return mostrarToast(mensagem, 'success', 3000, tipoJogo);
 }
 
-function showErrorToast(message, gameType = null) {
-    return showToast(message, 'error', 4000, gameType);
+function mostrarToastErro(mensagem, tipoJogo = null) {
+    return mostrarToast(mensagem, 'error', 4000, tipoJogo);
 }
 
-function showWarningToast(message, gameType = null) {
-    return showToast(message, 'warning', 3500, gameType);
+function mostrarToastAviso(mensagem, tipoJogo = null) {
+    return mostrarToast(mensagem, 'warning', 3500, tipoJogo);
 }
 
-function showInfoToast(message, gameType = null) {
-    return showToast(message, 'info', 3000, gameType);
+function mostrarToastInfo(mensagem, tipoJogo = null) {
+    return mostrarToast(mensagem, 'info', 3000, tipoJogo);
 }
 
-function showMatemagicaToast(message) {
-    return showToast(message, 'matemagica', 3000);
+function mostrarToastMatemagica(mensagem) {
+    return mostrarToast(mensagem, 'matemagica', 3000);
 }
 
 // Credenciais válidas (incluindo as padrão + novas cadastradas)
-let validCredentials = {
+let credenciaisValidas = {
     'admin': '123456',
     'crianca': 'matematica',
     'professor': 'ensino123',
@@ -130,7 +130,7 @@ let validCredentials = {
 };
 
 // Perfis de usuário
-const userProfiles = {
+const perfisUsuario = {
     'admin': 'Administrador',
     'crianca': 'Criança',
     'professor': 'Professor(a)',
@@ -139,580 +139,580 @@ const userProfiles = {
 
 // Inicialização da aplicação
 document.addEventListener('DOMContentLoaded', function() {
-    loadRegisteredUsers();
-    checkAuthentication();
+    carregarUsuariosCadastrados();
+    verificarAutenticacao();
 });
 
 // ===== FUNÇÕES DE AUTENTICAÇÃO =====
 
-function checkAuthentication() {
-    const sessionData = localStorage.getItem('matemagica-session');
+function verificarAutenticacao() {
+    const dadosSessao = localStorage.getItem('matemagica-sessao');
     
-    if (sessionData) {
+    if (dadosSessao) {
         try {
-            const session = JSON.parse(sessionData);
-            const now = Date.now();
+            const sessao = JSON.parse(dadosSessao);
+            const agora = Date.now();
             
             // Verificar se a sessão ainda é válida (24 horas)
-            if (session.expires > now) {
-                gameState.currentUser = session.user;
-                gameState.isAuthenticated = true;
-                loadUserProgress();
-                showScreen('home');
-                updateUserDisplay();
+            if (sessao.expira > agora) {
+                estadoJogo.usuarioAtual = sessao.usuario;
+                estadoJogo.estaAutenticado = true;
+                carregarProgressoUsuario();
+                mostrarTela('home');
+                atualizarExibicaoUsuario();
                 return;
             } else {
                 // Sessão expirada
-                localStorage.removeItem('matemagica-session');
+                localStorage.removeItem('matemagica-sessao');
             }
-        } catch (error) {
-            console.error('Erro ao verificar sessão:', error);
-            localStorage.removeItem('matemagica-session');
+        } catch (erro) {
+            console.error('Erro ao verificar sessão:', erro);
+            localStorage.removeItem('matemagica-sessao');
         }
     }
     
     // Não autenticado ou sessão inválida
-    gameState.isAuthenticated = false;
-    showScreen('login');
+    estadoJogo.estaAutenticado = false;
+    mostrarTela('login');
 }
 
-function performLogin() {
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value;
-    const errorDiv = document.getElementById('login-error');
+function realizarLogin() {
+    const usuario = document.getElementById('usuario').value.trim();
+    const senha = document.getElementById('senha').value;
+    const divErro = document.getElementById('erro-login');
     
     // Limpar erro anterior
-    errorDiv.classList.add('hidden');
+    divErro.classList.add('hidden');
     
     // Validar campos
-    if (!username || !password) {
-        showLoginError('Por favor, preencha todos os campos!');
+    if (!usuario || !senha) {
+        mostrarErroLogin('Por favor, preencha todos os campos!');
         return;
     }
     
     // Verificar credenciais
-    if (validCredentials[username] && validCredentials[username] === password) {
+    if (credenciaisValidas[usuario] && credenciaisValidas[usuario] === senha) {
         // Login bem-sucedido
-        gameState.currentUser = username;
-        gameState.isAuthenticated = true;
+        estadoJogo.usuarioAtual = usuario;
+        estadoJogo.estaAutenticado = true;
         
         // Criar sessão (válida por 24 horas)
-        const sessionData = {
-            user: username,
-            expires: Date.now() + (24 * 60 * 60 * 1000)
+        const dadosSessao = {
+            usuario: usuario,
+            expira: Date.now() + (24 * 60 * 60 * 1000)
         };
-        localStorage.setItem('matemagica-session', JSON.stringify(sessionData));
+        localStorage.setItem('matemagica-sessao', JSON.stringify(dadosSessao));
         
         // Carregar progresso do usuário
-        loadUserProgress();
+        carregarProgressoUsuario();
         
         // Mostrar toast de boas-vindas
-        const profileName = userProfiles[username] || username;
-        showSuccessToast(`🎉 Bem-vindo(a), ${profileName}! Vamos aprender matemática!`);
+        const nomePerfil = perfisUsuario[usuario] || usuario;
+        mostrarToastSucesso(`🎉 Bem-vindo(a), ${nomePerfil}! Vamos aprender matemática!`);
         
         // Ir para tela inicial após um breve delay
         setTimeout(() => {
-            showScreen('home');
-            updateUserDisplay();
+            mostrarTela('home');
+            atualizarExibicaoUsuario();
         }, 1500);
         
         // Limpar campos
-        document.getElementById('username').value = '';
-        document.getElementById('password').value = '';
+        document.getElementById('usuario').value = '';
+        document.getElementById('senha').value = '';
         
     } else {
-        showLoginError('Usuário ou senha incorretos!');
+        mostrarErroLogin('Usuário ou senha incorretos!');
     }
 }
 
-function showLoginError(message) {
-    const errorDiv = document.getElementById('login-error');
-    errorDiv.textContent = '❌ ' + message;
-    errorDiv.classList.remove('hidden');
+function mostrarErroLogin(mensagem) {
+    const divErro = document.getElementById('erro-login');
+    divErro.textContent = '❌ ' + mensagem;
+    divErro.classList.remove('hidden');
     
     // Animação de shake
-    const form = document.querySelector('.login-form');
-    form.style.animation = 'shake 0.5s ease-in-out';
+    const formulario = document.querySelector('.login-form');
+    formulario.style.animation = 'shake 0.5s ease-in-out';
     setTimeout(() => {
-        form.style.animation = '';
+        formulario.style.animation = '';
     }, 500);
 }
 
-function performLogout() {
+function realizarLogout() {
     // Criar confirmação personalizada com toast
-    const toastId = `toast-${++toastCounter}`;
-    showToast(`
+    const idToast = `toast-${++contadorToast}`;
+    mostrarToast(`
         <div style="text-align: center;">
             <div style="margin-bottom: 10px;">🚪 Tem certeza que deseja sair?</div>
             <div style="display: flex; gap: 10px; justify-content: center;">
-                <button id="confirm-logout-yes" style="background: #51cf66; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">✅ Sim</button>
-                <button id="confirm-logout-no" style="background: #ff6b6b; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">❌ Não</button>
+                <button id="confirmar-logout-sim" style="background: #51cf66; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">✅ Sim</button>
+                <button id="confirmar-logout-nao" style="background: #ff6b6b; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">❌ Não</button>
             </div>
         </div>
     `, 'warning', 10000);
 
     // Aguardar um pouco para os elementos serem criados no DOM
     setTimeout(() => {
-        const confirmYesButton = document.getElementById('confirm-logout-yes');
-        const confirmNoButton = document.getElementById('confirm-logout-no');
+        const botaoConfirmarSim = document.getElementById('confirmar-logout-sim');
+        const botaoConfirmarNao = document.getElementById('confirmar-logout-nao');
 
-        if (confirmYesButton) {
-            confirmYesButton.addEventListener('click', () => {
-                confirmLogout();
-                hideToast(toastId); // Esconder o toast após a confirmação
+        if (botaoConfirmarSim) {
+            botaoConfirmarSim.addEventListener('click', () => {
+                confirmarLogout();
+                esconderToast(idToast); // Esconder o toast após a confirmação
             });
         }
 
-        if (confirmNoButton) {
-            confirmNoButton.addEventListener('click', () => {
-                hideToast(toastId); // Apenas esconder o toast
+        if (botaoConfirmarNao) {
+            botaoConfirmarNao.addEventListener('click', () => {
+                esconderToast(idToast); // Apenas esconder o toast
             });
         }
     }, 100); // 100ms de delay para garantir que os elementos foram criados
 }
 
-function confirmLogout() {
+function confirmarLogout() {
     // Salvar progresso antes de sair
-    saveUserProgress();
+    salvarProgressoUsuario();
     
     // Limpar sessão
-    localStorage.removeItem('matemagica-session');
+    localStorage.removeItem('matemagica-sessao');
     
     // Reset do estado
-    gameState.currentUser = null;
-    gameState.isAuthenticated = false;
-    gameState.score = 0;
-    gameState.level = 1;
+    estadoJogo.usuarioAtual = null;
+    estadoJogo.estaAutenticado = false;
+    estadoJogo.pontuacao = 0;
+    estadoJogo.nivel = 1;
     
     // Limpar toasts
-    clearAllToasts();
+    limparTodosToasts();
     
     // Mostrar toast de despedida
-    showSuccessToast('👋 Logout realizado com sucesso! Até logo!');
+    mostrarToastSucesso('👋 Logout realizado com sucesso! Até logo!');
     
     // Voltar para login após um breve delay
     setTimeout(() => {
-        showScreen('login');
+        mostrarTela('login');
     }, 1500);
 }
 
 // ===== FUNÇÕES DE CADASTRO =====
 
-function showRegisterScreen() {
-    showScreen('register');
-    clearRegisterForm();
+function mostrarTelaCadastro() {
+    mostrarTela('register');
+    limparFormularioCadastro();
 }
 
-function showLoginScreen() {
-    showScreen('login');
-    clearLoginForm();
+function mostrarTelaLogin() {
+    mostrarTela('login');
+    limparFormularioLogin();
 }
 
-function clearRegisterForm() {
-    document.getElementById('register-username').value = '';
-    document.getElementById('register-password').value = '';
-    document.getElementById('register-confirm-password').value = '';
-    document.getElementById('register-profile').value = '';
-    document.getElementById('register-error').classList.add('hidden');
-    document.getElementById('register-success').classList.add('hidden');
+function limparFormularioCadastro() {
+    document.getElementById('usuario-cadastro').value = '';
+    document.getElementById('senha-cadastro').value = '';
+    document.getElementById('confirmar-senha').value = '';
+    document.getElementById('perfil-cadastro').value = '';
+    document.getElementById('erro-cadastro').classList.add('hidden');
+    document.getElementById('sucesso-cadastro').classList.add('hidden');
 }
 
-function clearLoginForm() {
-    document.getElementById('username').value = '';
-    document.getElementById('password').value = '';
-    document.getElementById('login-error').classList.add('hidden');
+function limparFormularioLogin() {
+    document.getElementById('usuario').value = '';
+    document.getElementById('senha').value = '';
+    document.getElementById('erro-login').classList.add('hidden');
 }
 
-function performRegister() {
-    const username = document.getElementById('register-username').value.trim();
-    const password = document.getElementById('register-password').value;
-    const confirmPassword = document.getElementById('register-confirm-password').value;
-    const profile = document.getElementById('register-profile').value;
+function realizarCadastro() {
+    const usuario = document.getElementById('usuario-cadastro').value.trim();
+    const senha = document.getElementById('senha-cadastro').value;
+    const confirmarSenha = document.getElementById('confirmar-senha').value;
+    const perfil = document.getElementById('perfil-cadastro').value;
     
-    const errorDiv = document.getElementById('register-error');
-    const successDiv = document.getElementById('register-success');
+    const divErro = document.getElementById('erro-cadastro');
+    const divSucesso = document.getElementById('sucesso-cadastro');
     
     // Limpar mensagens anteriores
-    errorDiv.classList.add('hidden');
-    successDiv.classList.add('hidden');
+    divErro.classList.add('hidden');
+    divSucesso.classList.add('hidden');
     
     // Validações
-    if (!username || !password || !confirmPassword || !profile) {
-        showRegisterError('Por favor, preencha todos os campos!');
+    if (!usuario || !senha || !confirmarSenha || !perfil) {
+        mostrarErroCadastro('Por favor, preencha todos os campos!');
         return;
     }
     
-    if (username.length < 3) {
-        showRegisterError('O nome de usuário deve ter pelo menos 3 caracteres!');
+    if (usuario.length < 3) {
+        mostrarErroCadastro('O nome de usuário deve ter pelo menos 3 caracteres!');
         return;
     }
     
-    if (password.length < 4) {
-        showRegisterError('A senha deve ter pelo menos 4 caracteres!');
+    if (senha.length < 4) {
+        mostrarErroCadastro('A senha deve ter pelo menos 4 caracteres!');
         return;
     }
     
-    if (password !== confirmPassword) {
-        showRegisterError('As senhas não coincidem!');
+    if (senha !== confirmarSenha) {
+        mostrarErroCadastro('As senhas não coincidem!');
         return;
     }
     
     // Verificar se usuário já existe
-    if (validCredentials[username]) {
-        showRegisterError('Este nome de usuário já está em uso!');
+    if (credenciaisValidas[usuario]) {
+        mostrarErroCadastro('Este nome de usuário já está em uso!');
         return;
     }
     
     // Cadastro bem-sucedido
-    validCredentials[username] = password;
-    userProfiles[username] = getProfileDisplayName(profile);
+    credenciaisValidas[usuario] = senha;
+    perfisUsuario[usuario] = obterNomeExibicaoPerfil(perfil);
     
     // Salvar usuários cadastrados
-    saveRegisteredUsers();
+    salvarUsuariosCadastrados();
     
     // Mostrar sucesso
-    showSuccessToast('✅ Conta criada com sucesso! Redirecionando para o login...');
+    mostrarToastSucesso('✅ Conta criada com sucesso! Redirecionando para o login...');
     
     // Redirecionar para login após 2 segundos
     setTimeout(() => {
-        showLoginScreen();
+        mostrarTelaLogin();
         // Pré-preencher o usuário
-        document.getElementById('username').value = username;
-        showInfoToast(`💡 Agora faça login com sua nova conta: ${username}`);
+        document.getElementById('usuario').value = usuario;
+        mostrarToastInfo(`💡 Agora faça login com sua nova conta: ${usuario}`);
     }, 2000);
 }
 
-function showRegisterError(message) {
-    const errorDiv = document.getElementById('register-error');
-    errorDiv.textContent = '❌ ' + message;
-    errorDiv.classList.remove('hidden');
+function mostrarErroCadastro(mensagem) {
+    const divErro = document.getElementById('erro-cadastro');
+    divErro.textContent = '❌ ' + mensagem;
+    divErro.classList.remove('hidden');
     
     // Animação de shake
-    const form = document.querySelector('.register-form');
-    form.style.animation = 'shake 0.5s ease-in-out';
+    const formulario = document.querySelector('.register-form');
+    formulario.style.animation = 'shake 0.5s ease-in-out';
     setTimeout(() => {
-        form.style.animation = '';
+        formulario.style.animation = '';
     }, 500);
 }
 
-function showRegisterSuccess(message) {
-    const successDiv = document.getElementById('register-success');
-    successDiv.textContent = '✅ ' + message;
-    successDiv.classList.remove('hidden');
+function mostrarSucessoCadastro(mensagem) {
+    const divSucesso = document.getElementById('sucesso-cadastro');
+    divSucesso.textContent = '✅ ' + mensagem;
+    divSucesso.classList.remove('hidden');
 }
 
-function getProfileDisplayName(profile) {
-    const profiles = {
+function obterNomeExibicaoPerfil(perfil) {
+    const perfis = {
         'crianca': 'Criança',
         'professor': 'Professor(a)',
         'pai': 'Responsável'
     };
-    return profiles[profile] || 'Usuário';
+    return perfis[perfil] || 'Usuário';
 }
 
 // ===== FUNÇÕES DE PERSISTÊNCIA =====
 
-function saveRegisteredUsers() {
-    const registeredUsers = {};
+function salvarUsuariosCadastrados() {
+    const usuariosCadastrados = {};
     
     // Salvar apenas usuários cadastrados (não os padrão)
-    for (const username in validCredentials) {
-        if (!['admin', 'crianca', 'professor', 'pai'].includes(username)) {
-            registeredUsers[username] = {
-                password: validCredentials[username],
-                profile: userProfiles[username]
+    for (const usuario in credenciaisValidas) {
+        if (!['admin', 'crianca', 'professor', 'pai'].includes(usuario)) {
+            usuariosCadastrados[usuario] = {
+                senha: credenciaisValidas[usuario],
+                perfil: perfisUsuario[usuario]
             };
         }
     }
     
-    localStorage.setItem('matemagica-registered-users', JSON.stringify(registeredUsers));
+    localStorage.setItem('matemagica-usuarios-cadastrados', JSON.stringify(usuariosCadastrados));
 }
 
-function loadRegisteredUsers() {
-    const registeredUsers = localStorage.getItem('matemagica-registered-users');
+function carregarUsuariosCadastrados() {
+    const usuariosCadastrados = localStorage.getItem('matemagica-usuarios-cadastrados');
     
-    if (registeredUsers) {
+    if (usuariosCadastrados) {
         try {
-            const users = JSON.parse(registeredUsers);
+            const usuarios = JSON.parse(usuariosCadastrados);
             
-            for (const username in users) {
-                validCredentials[username] = users[username].password;
-                userProfiles[username] = users[username].profile;
+            for (const usuario in usuarios) {
+                credenciaisValidas[usuario] = usuarios[usuario].senha;
+                perfisUsuario[usuario] = usuarios[usuario].perfil;
             }
-        } catch (error) {
-            console.error('Erro ao carregar usuários cadastrados:', error);
+        } catch (erro) {
+            console.error('Erro ao carregar usuários cadastrados:', erro);
         }
     }
 }
 
-function saveUserProgress() {
-    if (gameState.currentUser) {
-        const progressData = {
-            score: gameState.score,
-            level: gameState.level,
-            lastPlayed: Date.now()
+function salvarProgressoUsuario() {
+    if (estadoJogo.usuarioAtual) {
+        const dadosProgresso = {
+            pontuacao: estadoJogo.pontuacao,
+            nivel: estadoJogo.nivel,
+            ultimaJogada: Date.now()
         };
         
-        localStorage.setItem(`matemagica-progress-${gameState.currentUser}`, JSON.stringify(progressData));
+        localStorage.setItem(`matemagica-progresso-${estadoJogo.usuarioAtual}`, JSON.stringify(dadosProgresso));
     }
 }
 
-function loadUserProgress() {
-    if (gameState.currentUser) {
-        const progressData = localStorage.getItem(`matemagica-progress-${gameState.currentUser}`);
+function carregarProgressoUsuario() {
+    if (estadoJogo.usuarioAtual) {
+        const dadosProgresso = localStorage.getItem(`matemagica-progresso-${estadoJogo.usuarioAtual}`);
         
-        if (progressData) {
+        if (dadosProgresso) {
             try {
-                const progress = JSON.parse(progressData);
-                gameState.score = progress.score || 0;
-                gameState.level = progress.level || 1;
-                updateScoreDisplay();
-            } catch (error) {
-                console.error('Erro ao carregar progresso:', error);
-                gameState.score = 0;
-                gameState.level = 1;
+                const progresso = JSON.parse(dadosProgresso);
+                estadoJogo.pontuacao = progresso.pontuacao || 0;
+                estadoJogo.nivel = progresso.nivel || 1;
+                atualizarExibicaoPontuacao();
+            } catch (erro) {
+                console.error('Erro ao carregar progresso:', erro);
+                estadoJogo.pontuacao = 0;
+                estadoJogo.nivel = 1;
             }
         } else {
-            gameState.score = 0;
-            gameState.level = 1;
+            estadoJogo.pontuacao = 0;
+            estadoJogo.nivel = 1;
         }
     }
 }
 
 // ===== FUNÇÕES DE INTERFACE =====
 
-function updateUserDisplay() {
-    if (gameState.currentUser) {
-        const userNameElement = document.getElementById('current-user');
-        const displayName = userProfiles[gameState.currentUser] || gameState.currentUser;
-        userNameElement.textContent = displayName;
+function atualizarExibicaoUsuario() {
+    if (estadoJogo.usuarioAtual) {
+        const elementoNomeUsuario = document.getElementById('usuario-atual');
+        const nomeExibicao = perfisUsuario[estadoJogo.usuarioAtual] || estadoJogo.usuarioAtual;
+        elementoNomeUsuario.textContent = nomeExibicao;
     }
 }
 
-function requireAuthentication() {
-    if (!gameState.isAuthenticated) {
-        showErrorToast('🔒 Você precisa fazer login primeiro!');
-        showScreen('login');
+function requererAutenticacao() {
+    if (!estadoJogo.estaAutenticado) {
+        mostrarToastErro('🔒 Você precisa fazer login primeiro!');
+        mostrarTela('login');
         return false;
     }
     return true;
 }
 
 // Função para mostrar uma tela específica
-function showScreen(screenName) {
+function mostrarTela(nomeTela) {
     // Esconder todas as telas
-    const screens = document.querySelectorAll('.screen');
-    screens.forEach(screen => {
-        screen.classList.remove('active');
+    const telas = document.querySelectorAll('.screen');
+    telas.forEach(tela => {
+        tela.classList.remove('active');
     });
     
     // Mostrar a tela solicitada
-    const targetScreen = document.getElementById(screenName + '-screen');
-    if (targetScreen) {
-        targetScreen.classList.add('active');
-        gameState.currentScreen = screenName;
+    const telaAlvo = document.getElementById(nomeTela + '-screen');
+    if (telaAlvo) {
+        telaAlvo.classList.add('active');
+        estadoJogo.telaAtual = nomeTela;
     }
 }
 
 // Função para voltar à tela inicial
-function goHome() {
-    if (!requireAuthentication()) return;
+function irParaHome() {
+    if (!requererAutenticacao()) return;
     
-    showScreen('home');
-    updateScoreDisplay();
-    saveUserProgress();
+    mostrarTela('home');
+    atualizarExibicaoPontuacao();
+    salvarProgressoUsuario();
 }
 
 // Função para iniciar um jogo
-function startGame(gameType) {
-    if (!requireAuthentication()) return;
+function iniciarJogo(tipoJogo) {
+    if (!requererAutenticacao()) return;
     
-    gameState.currentGame = gameType;
-    showScreen(gameType);
-    generateProblem(gameType);
-    updateGameScore(gameType);
+    estadoJogo.jogoAtual = tipoJogo;
+    mostrarTela(tipoJogo);
+    gerarProblema(tipoJogo);
+    atualizarPontuacaoJogo(tipoJogo);
     
     // Toast de boas-vindas específico do jogo
-    const gameNames = {
-        'addition': 'Adição Mágica',
-        'subtraction': 'Subtração Aventura', 
-        'multiplication': 'Multiplicação Mistério'
+    const nomesJogos = {
+        'adicao': 'Adição Mágica',
+        'subtracao': 'Subtração Aventura', 
+        'multiplicacao': 'Multiplicação Mistério'
     };
     
-    showMatemagicaToast(`🎮 Bem-vindo ao ${gameNames[gameType]}! Boa sorte!`);
+    mostrarToastMatemagica(`🎮 Bem-vindo ao ${nomesJogos[tipoJogo]}! Boa sorte!`);
     
     // Limpar feedback e botões
-    const feedback = document.getElementById(gameType + '-feedback');
-    const checkBtn = document.getElementById(gameType + '-check');
-    const continueBtn = document.getElementById(gameType + '-continue');
-    const answerInput = document.getElementById(gameType + '-answer');
+    const feedback = document.getElementById('feedback-' + tipoJogo);
+    const botaoVerificar = document.getElementById('verificar-' + tipoJogo);
+    const botaoContinuar = document.getElementById('continuar-' + tipoJogo);
+    const entradaResposta = document.getElementById('resposta-' + tipoJogo);
     
     if (feedback) feedback.classList.add('hidden');
-    if (checkBtn) checkBtn.classList.remove('hidden');
-    if (continueBtn) continueBtn.classList.add('hidden');
-    if (answerInput) {
-        answerInput.value = '';
-        answerInput.focus();
+    if (botaoVerificar) botaoVerificar.classList.remove('hidden');
+    if (botaoContinuar) botaoContinuar.classList.add('hidden');
+    if (entradaResposta) {
+        entradaResposta.value = '';
+        entradaResposta.focus();
     }
 }
 
 // Função para gerar um problema matemático
-function generateProblem(gameType) {
+function gerarProblema(tipoJogo) {
     let num1, num2;
     
-    switch (gameType) {
-        case 'addition':
+    switch (tipoJogo) {
+        case 'adicao':
             num1 = Math.floor(Math.random() * 10) + 1;
             num2 = Math.floor(Math.random() * 10) + 1;
-            gameState.problems.addition = { num1, num2, answer: num1 + num2 };
-            document.getElementById('addition-num1').textContent = num1;
-            document.getElementById('addition-num2').textContent = num2;
+            estadoJogo.problemas.adicao = { num1, num2, resposta: num1 + num2 };
+            document.getElementById('numero1-adicao').textContent = num1;
+            document.getElementById('numero2-adicao').textContent = num2;
             break;
             
-        case 'subtraction':
+        case 'subtracao':
             num1 = Math.floor(Math.random() * 15) + 5;
             num2 = Math.floor(Math.random() * num1) + 1;
-            gameState.problems.subtraction = { num1, num2, answer: num1 - num2 };
-            document.getElementById('subtraction-num1').textContent = num1;
-            document.getElementById('subtraction-num2').textContent = num2;
+            estadoJogo.problemas.subtracao = { num1, num2, resposta: num1 - num2 };
+            document.getElementById('numero1-subtracao').textContent = num1;
+            document.getElementById('numero2-subtracao').textContent = num2;
             break;
             
-        case 'multiplication':
+        case 'multiplicacao':
             num1 = Math.floor(Math.random() * 10) + 1;
             num2 = Math.floor(Math.random() * 10) + 1;
-            gameState.problems.multiplication = { num1, num2, answer: num1 * num2 };
-            document.getElementById('multiplication-num1').textContent = num1;
-            document.getElementById('multiplication-num2').textContent = num2;
+            estadoJogo.problemas.multiplicacao = { num1, num2, resposta: num1 * num2 };
+            document.getElementById('numero1-multiplicacao').textContent = num1;
+            document.getElementById('numero2-multiplicacao').textContent = num2;
             break;
     }
 }
 
 // Função para verificar a resposta
-function checkAnswer(gameType) {
-    const answerInput = document.getElementById(gameType + '-answer');
-    const userAnswer = parseInt(answerInput.value);
-    const correctAnswer = gameState.problems[gameType].answer;
-    const feedback = document.getElementById(gameType + '-feedback');
-    const checkBtn = document.getElementById(gameType + '-check');
-    const continueBtn = document.getElementById(gameType + '-continue');
+function verificarResposta(tipoJogo) {
+    const entradaResposta = document.getElementById('resposta-' + tipoJogo);
+    const respostaUsuario = parseInt(entradaResposta.value);
+    const respostaCorreta = estadoJogo.problemas[tipoJogo].resposta;
+    const feedback = document.getElementById('feedback-' + tipoJogo);
+    const botaoVerificar = document.getElementById('verificar-' + tipoJogo);
+    const botaoContinuar = document.getElementById('continuar-' + tipoJogo);
     
-    if (isNaN(userAnswer)) {
+    if (isNaN(respostaUsuario)) {
         feedback.textContent = '🤔 Por favor, digite um número!';
         feedback.className = 'feedback incorrect';
         feedback.classList.remove('hidden');
         return;
     }
     
-    if (userAnswer === correctAnswer) {
+    if (respostaUsuario === respostaCorreta) {
         // Resposta correta
         feedback.textContent = '🎉 Parabéns! Resposta correta!';
         feedback.className = 'feedback correct';
         
         // Adicionar pontos
-        const points = gameType === 'multiplication' ? 15 : (gameType === 'subtraction' ? 12 : 10);
-        gameState.score += points;
+        const pontos = tipoJogo === 'multiplicacao' ? 15 : (tipoJogo === 'subtracao' ? 12 : 10);
+        estadoJogo.pontuacao += pontos;
         
         // Verificar se subiu de nível
-        const newLevel = Math.floor(gameState.score / 100) + 1;
-        if (newLevel > gameState.level) {
-            gameState.level = newLevel;
-            feedback.textContent += ` 🆙 Você subiu para o nível ${gameState.level}!`;
-            showSuccessToast(`🎊 Parabéns! Você subiu para o nível ${gameState.level}!`, gameType);
+        const novoNivel = Math.floor(estadoJogo.pontuacao / 100) + 1;
+        if (novoNivel > estadoJogo.nivel) {
+            estadoJogo.nivel = novoNivel;
+            feedback.textContent += ` 🆙 Você subiu para o nível ${estadoJogo.nivel}!`;
+            mostrarToastSucesso(`🎊 Parabéns! Você subiu para o nível ${estadoJogo.nivel}!`, tipoJogo);
         } else {
-            showSuccessToast(`🎯 Resposta correta! +${points} pontos!`, gameType);
+            mostrarToastSucesso(`🎯 Resposta correta! +${pontos} pontos!`, tipoJogo);
         }
         
-        updateScoreDisplay();
-        updateGameScore(gameType);
-        saveUserProgress();
+        atualizarExibicaoPontuacao();
+        atualizarPontuacaoJogo(tipoJogo);
+        salvarProgressoUsuario();
         
     } else {
         // Resposta incorreta
-        feedback.textContent = `❌ Ops! A resposta correta é ${correctAnswer}. Tente novamente!`;
+        feedback.textContent = `❌ Ops! A resposta correta é ${respostaCorreta}. Tente novamente!`;
         feedback.className = 'feedback incorrect';
-        showErrorToast(`💭 A resposta correta era ${correctAnswer}. Continue tentando!`, gameType);
+        mostrarToastErro(`💭 A resposta correta era ${respostaCorreta}. Continue tentando!`, tipoJogo);
     }
     
     feedback.classList.remove('hidden');
-    checkBtn.classList.add('hidden');
-    continueBtn.classList.remove('hidden');
+    botaoVerificar.classList.add('hidden');
+    botaoContinuar.classList.remove('hidden');
 }
 
 // Função para próximo problema
-function nextProblem(gameType) {
-    generateProblem(gameType);
+function proximoProblema(tipoJogo) {
+    gerarProblema(tipoJogo);
     
-    const feedback = document.getElementById(gameType + '-feedback');
-    const checkBtn = document.getElementById(gameType + '-check');
-    const continueBtn = document.getElementById(gameType + '-continue');
-    const answerInput = document.getElementById(gameType + '-answer');
+    const feedback = document.getElementById('feedback-' + tipoJogo);
+    const botaoVerificar = document.getElementById('verificar-' + tipoJogo);
+    const botaoContinuar = document.getElementById('continuar-' + tipoJogo);
+    const entradaResposta = document.getElementById('resposta-' + tipoJogo);
     
     feedback.classList.add('hidden');
-    checkBtn.classList.remove('hidden');
-    continueBtn.classList.add('hidden');
-    answerInput.value = '';
-    answerInput.focus();
+    botaoVerificar.classList.remove('hidden');
+    botaoContinuar.classList.add('hidden');
+    entradaResposta.value = '';
+    entradaResposta.focus();
 }
 
 // Função para atualizar a exibição da pontuação
-function updateScoreDisplay() {
-    const scoreElement = document.getElementById('score');
-    const levelElement = document.getElementById('level');
+function atualizarExibicaoPontuacao() {
+    const elementoPontuacao = document.getElementById('pontuacao');
+    const elementoNivel = document.getElementById('nivel');
     
-    if (scoreElement) scoreElement.textContent = gameState.score;
-    if (levelElement) levelElement.textContent = gameState.level;
+    if (elementoPontuacao) elementoPontuacao.textContent = estadoJogo.pontuacao;
+    if (elementoNivel) elementoNivel.textContent = estadoJogo.nivel;
 }
 
 // Função para atualizar a pontuação do jogo específico
-function updateGameScore(gameType) {
-    const gameScoreElement = document.getElementById(gameType + '-score');
-    if (gameScoreElement) {
-        gameScoreElement.textContent = gameState.score;
+function atualizarPontuacaoJogo(tipoJogo) {
+    const elementoPontuacaoJogo = document.getElementById('pontuacao-' + tipoJogo);
+    if (elementoPontuacaoJogo) {
+        elementoPontuacaoJogo.textContent = estadoJogo.pontuacao;
     }
 }
 
 // Event listeners para Enter nos formulários
 document.addEventListener('DOMContentLoaded', function() {
     // Login form
-    const loginInputs = ['username', 'password'];
-    loginInputs.forEach(inputId => {
-        const input = document.getElementById(inputId);
+    const entradasLogin = ['usuario', 'senha'];
+    entradasLogin.forEach(idInput => {
+        const input = document.getElementById(idInput);
         if (input) {
             input.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
-                    performLogin();
+                    realizarLogin();
                 }
             });
         }
     });
     
     // Register form
-    const registerInputs = ['register-username', 'register-password', 'register-confirm-password'];
-    registerInputs.forEach(inputId => {
-        const input = document.getElementById(inputId);
+    const entradasCadastro = ['usuario-cadastro', 'senha-cadastro', 'confirmar-senha'];
+    entradasCadastro.forEach(idInput => {
+        const input = document.getElementById(idInput);
         if (input) {
             input.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
-                    performRegister();
+                    realizarCadastro();
                 }
             });
         }
     });
     
     // Game answer inputs
-    const gameTypes = ['addition', 'subtraction', 'multiplication'];
-    gameTypes.forEach(gameType => {
-        const input = document.getElementById(gameType + '-answer');
+    const tiposJogo = ['adicao', 'subtracao', 'multiplicacao'];
+    tiposJogo.forEach(tipoJogo => {
+        const input = document.getElementById('resposta-' + tipoJogo);
         if (input) {
             input.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
-                    const checkBtn = document.getElementById(gameType + '-check');
-                    const continueBtn = document.getElementById(gameType + '-continue');
+                    const botaoVerificar = document.getElementById('verificar-' + tipoJogo);
+                    const botaoContinuar = document.getElementById('continuar-' + tipoJogo);
                     
-                    if (!checkBtn.classList.contains('hidden')) {
-                        checkAnswer(gameType);
-                    } else if (!continueBtn.classList.contains('hidden')) {
-                        nextProblem(gameType);
+                    if (!botaoVerificar.classList.contains('hidden')) {
+                        verificarResposta(tipoJogo);
+                    } else if (!botaoContinuar.classList.contains('hidden')) {
+                        proximoProblema(tipoJogo);
                     }
                 }
             });

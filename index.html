@@ -37,20 +37,20 @@
                 <!-- Formulário de Login -->
                 <div class="login-form auth-form">
                     <div class="form-group auth-form-group">
-                        <label for="username" class="form-label auth-form-label">👤 Usuário</label>
-                        <input type="text" id="username" class="form-input auth-form-input" placeholder="Digite seu usuário" required>
+                        <label for="usuario" class="form-label auth-form-label">👤 Usuário</label>
+                        <input type="text" id="usuario" class="form-input auth-form-input" placeholder="Digite seu usuário" required>
                     </div>
                     
                     <div class="form-group auth-form-group">
-                        <label for="password" class="form-label auth-form-label">🔒 Senha</label>
-                        <input type="password" id="password" class="form-input auth-form-input" placeholder="Digite sua senha" required>
+                        <label for="senha" class="form-label auth-form-label">🔒 Senha</label>
+                        <input type="password" id="senha" class="form-input auth-form-input" placeholder="Digite sua senha" required>
                     </div>
                     
-                    <div id="login-error" class="login-error hidden auth-error">
+                    <div id="erro-login" class="login-error hidden auth-error">
                         ❌ Usuário ou senha incorretos!
                     </div>
                     
-                    <button id="login-btn" class="login-btn auth-btn" onclick="performLogin()">
+                    <button id="botao-login" class="login-btn auth-btn" onclick="realizarLogin()">
                         🚀 Entrar no Matemagica
                     </button>
                 </div>
@@ -63,7 +63,7 @@
                 <!-- Link para cadastro -->
                 <div class="register-link auth-link">
                     <p class="register-text auth-link-text">Não tem uma conta? 
-                        <button class="register-link-btn auth-link-btn" onclick="showRegisterScreen()">
+                        <button class="register-link-btn auth-link-btn" onclick="mostrarTelaCadastro()">
                             ✨ Cadastre-se aqui
                         </button>
                     </p>
@@ -93,23 +93,23 @@
                 <!-- Formulário de Cadastro -->
                 <div class="register-form auth-form">
                     <div class="form-group auth-form-group">
-                        <label for="register-username" class="form-label auth-form-label">👤 Usuário</label>
-                        <input type="text" id="register-username" class="form-input auth-form-input" placeholder="Escolha um nome de usuário" required>
+                        <label for="usuario-cadastro" class="form-label auth-form-label">👤 Usuário</label>
+                        <input type="text" id="usuario-cadastro" class="form-input auth-form-input" placeholder="Escolha um nome de usuário" required>
                     </div>
                     
                     <div class="form-group auth-form-group">
-                        <label for="register-password" class="form-label auth-form-label">🔒 Senha</label>
-                        <input type="password" id="register-password" class="form-input auth-form-input" placeholder="Crie uma senha" required>
+                        <label for="senha-cadastro" class="form-label auth-form-label">🔒 Senha</label>
+                        <input type="password" id="senha-cadastro" class="form-input auth-form-input" placeholder="Crie uma senha" required>
                     </div>
                     
                     <div class="form-group auth-form-group">
-                        <label for="register-confirm-password" class="form-label auth-form-label">🔒 Confirmar Senha</label>
-                        <input type="password" id="register-confirm-password" class="form-input auth-form-input" placeholder="Digite a senha novamente" required>
+                        <label for="confirmar-senha" class="form-label auth-form-label">🔒 Confirmar Senha</label>
+                        <input type="password" id="confirmar-senha" class="form-input auth-form-input" placeholder="Digite a senha novamente" required>
                     </div>
 
                     <div class="form-group auth-form-group">
-                        <label for="register-profile" class="form-label auth-form-label">🎭 Perfil</label>
-                        <select id="register-profile" class="form-select auth-form-select" required>
+                        <label for="perfil-cadastro" class="form-label auth-form-label">🎭 Perfil</label>
+                        <select id="perfil-cadastro" class="form-select auth-form-select" required>
                             <option value="">Selecione seu perfil</option>
                             <option value="crianca">🧒 Criança</option>
                             <option value="professor">👨‍🏫 Professor(a)</option>
@@ -117,15 +117,15 @@
                         </select>
                     </div>
                     
-                    <div id="register-error" class="register-error hidden auth-error">
+                    <div id="erro-cadastro" class="register-error hidden auth-error">
                         ❌ Erro no cadastro!
                     </div>
                     
-                    <div id="register-success" class="register-success hidden auth-success">
+                    <div id="sucesso-cadastro" class="register-success hidden auth-success">
                         ✅ Conta criada com sucesso!
                     </div>
                     
-                    <button id="register-btn" class="register-btn auth-btn" onclick="performRegister()">
+                    <button id="botao-cadastro" class="register-btn auth-btn" onclick="realizarCadastro()">
                         🚀 Criar Conta
                     </button>
                 </div>
@@ -133,7 +133,7 @@
                 <!-- Link para voltar ao login -->
                 <div class="login-link auth-link">
                     <p class="login-text auth-link-text">Já tem uma conta? 
-                        <button class="login-link-btn auth-link-btn" onclick="showLoginScreen()">
+                        <button class="login-link-btn auth-link-btn" onclick="mostrarTelaLogin()">
                             🔑 Faça login aqui
                         </button>
                     </p>
@@ -155,9 +155,9 @@
                 <div class="user-bar">
                     <div class="user-info">
                         <span class="user-icon">👤</span>
-                        <span id="current-user" class="user-name">Administrador</span>
+                        <span id="usuario-atual" class="user-name">Administrador</span>
                     </div>
-                    <button class="logout-btn" onclick="performLogout()">🚪 Sair</button>
+                    <button class="logout-btn" onclick="realizarLogout()">🚪 Sair</button>
                 </div>
 
                 <!-- Mascote -->
@@ -173,17 +173,17 @@
                 <div class="player-status">
                     <div class="status-item">
                         <span class="star-icon">⭐</span>
-                        <span class="status-text">Pontos: <span id="score">0</span></span>
+                        <span class="status-text">Pontos: <span id="pontuacao">0</span></span>
                     </div>
                     <div class="status-item">
                         <span class="trophy-icon">🏆</span>
-                        <span class="status-text">Nível: <span id="level">1</span></span>
+                        <span class="status-text">Nível: <span id="nivel">1</span></span>
                     </div>
                 </div>
 
                 <!-- Menu de jogos -->
                 <div class="games-menu">
-                    <div class="game-button addition-game" onclick="startGame('addition')">
+                    <div class="game-button addition-game" onclick="iniciarJogo('adicao')">
                         <img src="assets/icone-adicao.png" alt="Adição" class="game-icon">
                         <div class="game-info">
                             <h3 class="game-title">Adição Mágica</h3>
@@ -192,7 +192,7 @@
                         <span class="plus-icon">+</span>
                     </div>
                     
-                    <div class="game-button subtraction-game" onclick="startGame('subtraction')">
+                    <div class="game-button subtraction-game" onclick="iniciarJogo('subtracao')">
                         <img src="assets/icone-subtracao.png" alt="Subtração" class="game-icon">
                         <div class="game-info">
                             <h3 class="game-title">Subtração Aventura</h3>
@@ -201,7 +201,7 @@
                         <span class="plus-icon">+</span>
                     </div>
                     
-                    <div class="game-button multiplication-game" onclick="startGame('multiplication')">
+                    <div class="game-button multiplication-game" onclick="iniciarJogo('multiplicacao')">
                         <img src="assets/icone-multiplicacao.png" alt="Multiplicação" class="game-icon">
                         <div class="game-info">
                             <h3 class="game-title">Multiplicação Mistério</h3>
@@ -218,11 +218,11 @@
             <div class="container auth-container">
                 <!-- Header do jogo -->
                 <div class="game-header">
-                    <button class="home-btn" onclick="goHome()">🏠</button>
+                    <button class="home-btn" onclick="irParaHome()">🏠</button>
                     <h2 class="game-screen-title">Adição Mágica</h2>
                     <div class="score-display">
                         <span class="star-icon">⭐</span>
-                        <span id="addition-score">0</span>
+                        <span id="pontuacao-adicao">0</span>
                     </div>
                 </div>
 
@@ -234,20 +234,20 @@
                 <!-- Problema matemático -->
                 <div class="math-problem">
                     <div class="problem-text">
-                        <span id="addition-num1">0</span> + <span id="addition-num2">0</span> = ?
+                        <span id="numero1-adicao">0</span> + <span id="numero2-adicao">0</span> = ?
                     </div>
-                    <input type="number" id="addition-answer" class="answer-input" placeholder="?">
+                    <input type="number" id="resposta-adicao" class="answer-input" placeholder="?">
                 </div>
 
                 <!-- Feedback -->
-                <div id="addition-feedback" class="feedback hidden"></div>
+                <div id="feedback-adicao" class="feedback hidden"></div>
 
                 <!-- Botões -->
                 <div class="game-buttons">
-                    <button id="addition-check" class="check-btn" onclick="checkAnswer('addition')">
+                    <button id="verificar-adicao" class="check-btn" onclick="verificarResposta('adicao')">
                         Verificar Resposta
                     </button>
-                    <button id="addition-continue" class="continue-btn hidden" onclick="nextProblem('addition')">
+                    <button id="continuar-adicao" class="continue-btn hidden" onclick="proximoProblema('adicao')">
                         Continuar
                     </button>
                 </div>
@@ -259,11 +259,11 @@
             <div class="container auth-container">
                 <!-- Header do jogo -->
                 <div class="game-header">
-                    <button class="home-btn" onclick="goHome()">🏠</button>
+                    <button class="home-btn" onclick="irParaHome()">🏠</button>
                     <h2 class="game-screen-title">Subtração Aventura</h2>
                     <div class="score-display">
                         <span class="star-icon">⭐</span>
-                        <span id="subtraction-score">0</span>
+                        <span id="pontuacao-subtracao">0</span>
                     </div>
                 </div>
 
@@ -275,20 +275,20 @@
                 <!-- Problema matemático -->
                 <div class="math-problem">
                     <div class="problem-text">
-                        <span id="subtraction-num1">0</span> - <span id="subtraction-num2">0</span> = ?
+                        <span id="numero1-subtracao">0</span> - <span id="numero2-subtracao">0</span> = ?
                     </div>
-                    <input type="number" id="subtraction-answer" class="answer-input" placeholder="?">
+                    <input type="number" id="resposta-subtracao" class="answer-input" placeholder="?">
                 </div>
 
                 <!-- Feedback -->
-                <div id="subtraction-feedback" class="feedback hidden"></div>
+                <div id="feedback-subtracao" class="feedback hidden"></div>
 
                 <!-- Botões -->
                 <div class="game-buttons">
-                    <button id="subtraction-check" class="check-btn" onclick="checkAnswer('subtraction')">
+                    <button id="verificar-subtracao" class="check-btn" onclick="verificarResposta('subtracao')">
                         Verificar Resposta
                     </button>
-                    <button id="subtraction-continue" class="continue-btn hidden" onclick="nextProblem('subtraction')">
+                    <button id="continuar-subtracao" class="continue-btn hidden" onclick="proximoProblema('subtracao')">
                         Continuar
                     </button>
                 </div>
@@ -300,11 +300,11 @@
             <div class="container auth-container">
                 <!-- Header do jogo -->
                 <div class="game-header">
-                    <button class="home-btn" onclick="goHome()">🏠</button>
+                    <button class="home-btn" onclick="irParaHome()">🏠</button>
                     <h2 class="game-screen-title">Multiplicação Mistério</h2>
                     <div class="score-display">
                         <span class="star-icon">⭐</span>
-                        <span id="multiplication-score">0</span>
+                        <span id="pontuacao-multiplicacao">0</span>
                     </div>
                 </div>
 
@@ -316,20 +316,20 @@
                 <!-- Problema matemático -->
                 <div class="math-problem">
                     <div class="problem-text">
-                        <span id="multiplication-num1">0</span> × <span id="multiplication-num2">0</span> = ?
+                        <span id="numero1-multiplicacao">0</span> × <span id="numero2-multiplicacao">0</span> = ?
                     </div>
-                    <input type="number" id="multiplication-answer" class="answer-input" placeholder="?">
+                    <input type="number" id="resposta-multiplicacao" class="answer-input" placeholder="?">
                 </div>
 
                 <!-- Feedback -->
-                <div id="multiplication-feedback" class="feedback hidden"></div>
+                <div id="feedback-multiplicacao" class="feedback hidden"></div>
 
                 <!-- Botões -->
                 <div class="game-buttons">
-                    <button id="multiplication-check" class="check-btn" onclick="checkAnswer('multiplication')">
+                    <button id="verificar-multiplicacao" class="check-btn" onclick="verificarResposta('multiplicacao')">
                         Verificar Resposta
                     </button>
-                    <button id="multiplication-continue" class="continue-btn hidden" onclick="nextProblem('multiplication')">
+                    <button id="continuar-multiplicacao" class="continue-btn hidden" onclick="proximoProblema('multiplicacao')">
                         Continuar
                     </button>
                 </div>
@@ -340,4 +340,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-
