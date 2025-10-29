@@ -10,51 +10,148 @@ let estadoJogo = {
         adicao: { num1: 0, num2: 0, resposta: 0 },
         subtracao: { num1: 0, num2: 0, resposta: 0 },
         multiplicacao: { num1: 0, num2: 0, resposta: 0 }
+    },
+    historico: {
+        sessoes: [],
+        conquistas: [],
+        estatisticas: {
+            totalRespostas: 0,
+            respostasCorretas: 0,
+            tempoMedio: 0,
+            jogosCompletos: 0
+        }
+    },
+    tempoInicioSessao: null
+};
+
+// ===== SISTEMA DE PERSISTÊNCIA (Inspirado no professor) =====
+const CHAVES_DB = {
+    usuarios: 'matemagica_usuarios',
+    progresso: 'matemagica_progresso',
+    historico: 'matemagica_historico',
+    conquistas: 'matemagica_conquistas'
+};
+
+const repositorio = {
+    get(chave) {
+        return JSON.parse(localStorage.getItem(chave) || '[]');
+    },
+    set(chave, dados) {
+        localStorage.setItem(chave, JSON.stringify(dados));
+    },
+    push(chave, item) {
+        const arr = this.get(chave);
+        arr.push(item);
+        this.set(chave, arr);
+        return item;
+    },
+    atualizarPorId(chave, id, atualizador) {
+        const arr = this.get(chave);
+        const indice = arr.findIndex(x => x.id === id);
+        if (indice >= 0) {
+            arr[indice] = atualizador(arr[indice]);
+            this.set(chave, arr);
+            return arr[indice];
+        }
+        return null;
     }
 };
 
-// ===== SISTEMA DE TOAST =====
+// ===== SISTEMA DE CONQUISTAS =====
+const conquistas = {
+    iniciante: { 
+        id: 'iniciante', 
+        nome: '🎮 Primeiros Passos', 
+        descricao: 'Complete 10 problemas', 
+        progresso: 0, 
+        meta: 10,
+        obtida: false 
+    },
+    mestre: { 
+        id: 'mestre', 
+        nome: '🏆 Mestre da Matemática', 
+        descricao: 'Alcance o nível 3', 
+        progresso: 0, 
+        meta: 3,
+        obtida: false 
+    },
+    velocidade: { 
+        id: 'velocidade', 
+        nome: '⚡ Resposta Rápida', 
+        descricao: 'Responda 5 problemas em menos de 10 segundos cada', 
+        progresso: 0, 
+        meta: 5,
+        obtida: false 
+    },
+    adicaoExpert: { 
+        id: 'adicaoExpert', 
+        nome: '➕ Expert em Adição', 
+        descricao: 'Resolva 20 problemas de adição', 
+        progresso: 0, 
+        meta: 20,
+        obtida: false 
+    }
+};
 
+// ===== PERMISSÕES DE PERFIL =====
+const permissoesPerfil = {
+    crianca: {
+        jogos: ['adicao', 'subtracao'],
+        nivelMaximo: 3,
+        recursosExtras: false
+    },
+    professor: {
+        jogos: ['adicao', 'subtracao', 'multiplicacao'],
+        nivelMaximo: 10,
+        recursosExtras: true
+    },
+    pai: {
+        jogos: ['adicao', 'subtracao', 'multiplicacao'],
+        nivelMaximo: 6,
+        recursosExtras: true
+    }
+};
+
+// ===== SISTEMA DE TOAST MELHORADO =====
 let contadorToast = 0;
+let jogoAtivo = null; // Para evitar conflitos de jogos simultâneos
 
-function mostrarToast(mensagem, tipo = 'info', duracao = 4000, tipoJogo = null) {
+// mudar tempo de toast - Esta é a função principal onde o tempo padrão é definido
+function mostrarToast(mensagem, tipo = 'info', duracao = 3000, tipoJogo = null) {
     const containerToast = document.getElementById('toast-container');
-    if (!containerToast) return;
+    if (!containerToast) {
+        alert(mensagem);
+        return;
+    }
     
-    // Criar elemento do toast
     const toast = document.createElement('div');
     toast.className = `toast ${tipo}`;
     toast.id = `toast-${++contadorToast}`;
     
-    // Adicionar classe específica do jogo se fornecida
     if (tipoJogo) {
         toast.classList.add(tipoJogo);
     }
     
-    // Estrutura do toast
     toast.innerHTML = `
         <div class="toast-content">
-            <span class="toast-icon"></span>
+            <span class="toast-icon">${obterIconeToast(tipo)}</span>
             <span class="toast-message">${mensagem}</span>
             <button class="toast-close" onclick="esconderToast('${toast.id}')">&times;</button>
         </div>
         <div class="toast-progress"></div>
     `;
     
-    // Adicionar ao container
     containerToast.appendChild(toast);
     
-    // Mostrar toast com animação
     setTimeout(() => {
         toast.classList.add('show');
     }, 100);
     
-    // Auto-remover após duração especificada
     const timeoutAutoEsconder = setTimeout(() => {
         esconderToast(toast.id);
     }, duracao);
     
-    // Pausar auto-hide no hover
+    // Pausar no hover (melhoria do sistema do professor)
     toast.addEventListener('mouseenter', () => {
         clearTimeout(timeoutAutoEsconder);
         const barraProgresso = toast.querySelector('.toast-progress');
@@ -63,19 +160,23 @@ function mostrarToast(mensagem, tipo = 'info', duracao = 4000, tipoJogo = null) 
         }
     });
     
-    // Retomar auto-hide ao sair do hover
     toast.addEventListener('mouseleave', () => {
         const novoTempo = setTimeout(() => {
             esconderToast(toast.id);
-        }, 1000); // 1 segundo adicional após sair do hover
-    });
-    
-    // Fechar ao clicar no toast
-    toast.addEventListener('click', () => {
-        esconderToast(toast.id);
+        }, 1000);
     });
     
     return toast.id;
+}
+
+function obterIconeToast(tipo) {
+    const icones = {
+        success: '✅',
+        error: '❌',
+        warning: '⚠️',
+        info: 'ℹ️'
+    };
+    return icones[tipo] || '💡';
 }
 
 function esconderToast(idToast) {
@@ -85,7 +186,6 @@ function esconderToast(idToast) {
     toast.classList.remove('show');
     toast.classList.add('hide');
     
-    // Remover do DOM após animação
     setTimeout(() => {
         if (toast.parentNode) {
             toast.parentNode.removeChild(toast);
@@ -100,28 +200,53 @@ function limparTodosToasts() {
     }
 }
 
-// Funções de conveniência para diferentes tipos de toast
+// Funções de conveniência para toast - mudar tempo de toast em cada uma dessas
 function mostrarToastSucesso(mensagem, tipoJogo = null) {
-    return mostrarToast(mensagem, 'success', 3000, tipoJogo);
+    return mostrarToast(mensagem, 'success', 4000, tipoJogo); // mudar tempo de toast
 }
 
 function mostrarToastErro(mensagem, tipoJogo = null) {
-    return mostrarToast(mensagem, 'error', 4000, tipoJogo);
+    return mostrarToast(mensagem, 'error', 4000, tipoJogo); // mudar tempo de toast
 }
 
 function mostrarToastAviso(mensagem, tipoJogo = null) {
-    return mostrarToast(mensagem, 'warning', 3500, tipoJogo);
+    return mostrarToast(mensagem, 'warning', 4000, tipoJogo); // mudar tempo de toast
 }
 
 function mostrarToastInfo(mensagem, tipoJogo = null) {
-    return mostrarToast(mensagem, 'info', 3000, tipoJogo);
+    return mostrarToast(mensagem, 'info', 4000, tipoJogo); // mudar tempo de toast
 }
 
-function mostrarToastMatemagica(mensagem) {
-    return mostrarToast(mensagem, 'matemagica', 3000);
+// ===== SISTEMA DE NAVEGAÇÃO POR HASH =====
+function configurarNavegacao() {
+    const telas = document.querySelectorAll('.screen');
+    
+    function mostrarTelaPorHash() {
+        const hash = window.location.hash.replace('#', '') || 'login';
+        const telaAlvo = `${hash}-screen`;
+        
+        telas.forEach(tela => {
+            tela.classList.toggle('active', tela.id === telaAlvo);
+        });
+        
+        estadoJogo.telaAtual = hash;
+        
+        // Atualizar estado específico baseado na tela
+        if (hash === 'home' && estadoJogo.estaAutenticado) {
+            atualizarExibicaoUsuario();
+            atualizarExibicaoPontuacao();
+            carregarHistoricoJogos();
+        }
+    }
+    
+    window.addEventListener('hashchange', mostrarTelaPorHash);
+    window.addEventListener('load', mostrarTelaPorHash);
+    
+    // Navegação inicial
+    mostrarTelaPorHash();
 }
 
-// Credenciais válidas (incluindo as padrão + novas cadastradas)
+// ===== SISTEMA DE AUTENTICAÇÃO E USUÁRIOS =====
 let credenciaisValidas = {
     'admin': '123456',
     'crianca': 'matematica',
@@ -129,7 +254,6 @@ let credenciaisValidas = {
     'pai': 'familia'
 };
 
-// Perfis de usuário
 const perfisUsuario = {
     'admin': 'Administrador',
     'crianca': 'Criança',
@@ -141,9 +265,20 @@ const perfisUsuario = {
 document.addEventListener('DOMContentLoaded', function() {
     carregarUsuariosCadastrados();
     verificarAutenticacao();
+    configurarNavegacao();
+    carregarConquistas();
+    inicializarDados();
 });
 
-// ===== FUNÇÕES DE AUTENTICAÇÃO =====
+function inicializarDados() {
+    // Garantir que dados iniciais existam
+    if (!localStorage.getItem(CHAVES_DB.usuarios)) {
+        repositorio.set(CHAVES_DB.usuarios, []);
+    }
+    if (!localStorage.getItem(CHAVES_DB.conquistas)) {
+        salvarConquistas();
+    }
+}
 
 function verificarAutenticacao() {
     const dadosSessao = localStorage.getItem('matemagica-sessao');
@@ -153,16 +288,14 @@ function verificarAutenticacao() {
             const sessao = JSON.parse(dadosSessao);
             const agora = Date.now();
             
-            // Verificar se a sessão ainda é válida (24 horas)
             if (sessao.expira > agora) {
                 estadoJogo.usuarioAtual = sessao.usuario;
                 estadoJogo.estaAutenticado = true;
                 carregarProgressoUsuario();
-                mostrarTela('home');
-                atualizarExibicaoUsuario();
+                carregarHistoricoUsuario();
+                window.location.hash = 'home';
                 return;
             } else {
-                // Sessão expirada
                 localStorage.removeItem('matemagica-sessao');
             }
         } catch (erro) {
@@ -171,9 +304,8 @@ function verificarAutenticacao() {
         }
     }
     
-    // Não autenticado ou sessão inválida
     estadoJogo.estaAutenticado = false;
-    mostrarTela('login');
+    window.location.hash = 'login';
 }
 
 function realizarLogin() {
@@ -181,42 +313,37 @@ function realizarLogin() {
     const senha = document.getElementById('senha').value;
     const divErro = document.getElementById('erro-login');
     
-    // Limpar erro anterior
     divErro.classList.add('hidden');
     
-    // Validar campos
     if (!usuario || !senha) {
         mostrarErroLogin('Por favor, preencha todos os campos!');
         return;
     }
     
-    // Verificar credenciais
     if (credenciaisValidas[usuario] && credenciaisValidas[usuario] === senha) {
-        // Login bem-sucedido
         estadoJogo.usuarioAtual = usuario;
         estadoJogo.estaAutenticado = true;
+        estadoJogo.tempoInicioSessao = Date.now();
         
-        // Criar sessão (válida por 24 horas)
         const dadosSessao = {
             usuario: usuario,
             expira: Date.now() + (24 * 60 * 60 * 1000)
         };
         localStorage.setItem('matemagica-sessao', JSON.stringify(dadosSessao));
         
-        // Carregar progresso do usuário
         carregarProgressoUsuario();
+        carregarHistoricoUsuario();
         
-        // Mostrar toast de boas-vindas
         const nomePerfil = perfisUsuario[usuario] || usuario;
+        
+        // Toast: Login bem-sucedido - mensagem de boas-vindas
         mostrarToastSucesso(`🎉 Bem-vindo(a), ${nomePerfil}! Vamos aprender matemática!`);
         
-        // Ir para tela inicial após um breve delay
         setTimeout(() => {
-            mostrarTela('home');
+            window.location.hash = 'home';
             atualizarExibicaoUsuario();
         }, 1500);
         
-        // Limpar campos
         document.getElementById('usuario').value = '';
         document.getElementById('senha').value = '';
         
@@ -230,7 +357,6 @@ function mostrarErroLogin(mensagem) {
     divErro.textContent = '❌ ' + mensagem;
     divErro.classList.remove('hidden');
     
-    // Animação de shake
     const formulario = document.querySelector('.login-form');
     formulario.style.animation = 'shake 0.5s ease-in-out';
     setTimeout(() => {
@@ -239,7 +365,7 @@ function mostrarErroLogin(mensagem) {
 }
 
 function realizarLogout() {
-    // Criar confirmação personalizada com toast
+    // Toast: Confirmação de logout - toast interativo com botões
     const idToast = `toast-${++contadorToast}`;
     mostrarToast(`
         <div style="text-align: center;">
@@ -249,9 +375,8 @@ function realizarLogout() {
                 <button id="confirmar-logout-nao" style="background: #ff6b6b; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">❌ Não</button>
             </div>
         </div>
-    `, 'warning', 10000);
+    `, 'warning', 10000); // mudar tempo de toast
 
-    // Aguardar um pouco para os elementos serem criados no DOM
     setTimeout(() => {
         const botaoConfirmarSim = document.getElementById('confirmar-logout-sim');
         const botaoConfirmarNao = document.getElementById('confirmar-logout-nao');
@@ -259,53 +384,46 @@ function realizarLogout() {
         if (botaoConfirmarSim) {
             botaoConfirmarSim.addEventListener('click', () => {
                 confirmarLogout();
-                esconderToast(idToast); // Esconder o toast após a confirmação
+                esconderToast(idToast);
             });
         }
 
         if (botaoConfirmarNao) {
             botaoConfirmarNao.addEventListener('click', () => {
-                esconderToast(idToast); // Apenas esconder o toast
+                esconderToast(idToast);
             });
         }
-    }, 100); // 100ms de delay para garantir que os elementos foram criados
+    }, 100);
 }
 
 function confirmarLogout() {
-    // Salvar progresso antes de sair
+    registrarSessao();
     salvarProgressoUsuario();
     
-    // Limpar sessão
     localStorage.removeItem('matemagica-sessao');
     
-    // Reset do estado
     estadoJogo.usuarioAtual = null;
     estadoJogo.estaAutenticado = false;
     estadoJogo.pontuacao = 0;
     estadoJogo.nivel = 1;
     
-    // Limpar toasts
     limparTodosToasts();
     
-    // Mostrar toast de despedida
+    // Toast: Logout confirmado - confirmação de saída do sistema
     mostrarToastSucesso('👋 Logout realizado com sucesso! Até logo!');
     
-    // Voltar para login após um breve delay
     setTimeout(() => {
-        mostrarTela('login');
+        window.location.hash = 'login';
     }, 1500);
 }
 
-// ===== FUNÇÕES DE CADASTRO =====
-
+// ===== SISTEMA DE CADASTRO =====
 function mostrarTelaCadastro() {
-    mostrarTela('register');
-    limparFormularioCadastro();
+    window.location.hash = 'register';
 }
 
 function mostrarTelaLogin() {
-    mostrarTela('login');
-    limparFormularioLogin();
+    window.location.hash = 'login';
 }
 
 function limparFormularioCadastro() {
@@ -317,12 +435,6 @@ function limparFormularioCadastro() {
     document.getElementById('sucesso-cadastro').classList.add('hidden');
 }
 
-function limparFormularioLogin() {
-    document.getElementById('usuario').value = '';
-    document.getElementById('senha').value = '';
-    document.getElementById('erro-login').classList.add('hidden');
-}
-
 function realizarCadastro() {
     const usuario = document.getElementById('usuario-cadastro').value.trim();
     const senha = document.getElementById('senha-cadastro').value;
@@ -332,11 +444,9 @@ function realizarCadastro() {
     const divErro = document.getElementById('erro-cadastro');
     const divSucesso = document.getElementById('sucesso-cadastro');
     
-    // Limpar mensagens anteriores
     divErro.classList.add('hidden');
     divSucesso.classList.add('hidden');
     
-    // Validações
     if (!usuario || !senha || !confirmarSenha || !perfil) {
         mostrarErroCadastro('Por favor, preencha todos os campos!');
         return;
@@ -357,27 +467,24 @@ function realizarCadastro() {
         return;
     }
     
-    // Verificar se usuário já existe
     if (credenciaisValidas[usuario]) {
         mostrarErroCadastro('Este nome de usuário já está em uso!');
         return;
     }
     
-    // Cadastro bem-sucedido
     credenciaisValidas[usuario] = senha;
     perfisUsuario[usuario] = obterNomeExibicaoPerfil(perfil);
     
-    // Salvar usuários cadastrados
     salvarUsuariosCadastrados();
     
-    // Mostrar sucesso
+    // Toast: Cadastro bem-sucedido - confirmação de criação de conta
     mostrarToastSucesso('✅ Conta criada com sucesso! Redirecionando para o login...');
     
-    // Redirecionar para login após 2 segundos
     setTimeout(() => {
-        mostrarTelaLogin();
-        // Pré-preencher o usuário
+        window.location.hash = 'login';
         document.getElementById('usuario').value = usuario;
+        
+        // Toast: Instrução pós-cadastro - orientação para o próximo passo
         mostrarToastInfo(`💡 Agora faça login com sua nova conta: ${usuario}`);
     }, 2000);
 }
@@ -387,18 +494,11 @@ function mostrarErroCadastro(mensagem) {
     divErro.textContent = '❌ ' + mensagem;
     divErro.classList.remove('hidden');
     
-    // Animação de shake
     const formulario = document.querySelector('.register-form');
     formulario.style.animation = 'shake 0.5s ease-in-out';
     setTimeout(() => {
         formulario.style.animation = '';
     }, 500);
-}
-
-function mostrarSucessoCadastro(mensagem) {
-    const divSucesso = document.getElementById('sucesso-cadastro');
-    divSucesso.textContent = '✅ ' + mensagem;
-    divSucesso.classList.remove('hidden');
 }
 
 function obterNomeExibicaoPerfil(perfil) {
@@ -410,12 +510,10 @@ function obterNomeExibicaoPerfil(perfil) {
     return perfis[perfil] || 'Usuário';
 }
 
-// ===== FUNÇÕES DE PERSISTÊNCIA =====
-
+// ===== SISTEMA DE PERSISTÊNCIA =====
 function salvarUsuariosCadastrados() {
     const usuariosCadastrados = {};
     
-    // Salvar apenas usuários cadastrados (não os padrão)
     for (const usuario in credenciaisValidas) {
         if (!['admin', 'crianca', 'professor', 'pai'].includes(usuario)) {
             usuariosCadastrados[usuario] = {
@@ -472,76 +570,91 @@ function carregarProgressoUsuario() {
                 estadoJogo.pontuacao = 0;
                 estadoJogo.nivel = 1;
             }
-        } else {
-            estadoJogo.pontuacao = 0;
-            estadoJogo.nivel = 1;
         }
     }
 }
 
-// ===== FUNÇÕES DE INTERFACE =====
-
-function atualizarExibicaoUsuario() {
+function salvarHistoricoUsuario() {
     if (estadoJogo.usuarioAtual) {
-        const elementoNomeUsuario = document.getElementById('usuario-atual');
-        const nomeExibicao = perfisUsuario[estadoJogo.usuarioAtual] || estadoJogo.usuarioAtual;
-        elementoNomeUsuario.textContent = nomeExibicao;
+        localStorage.setItem(`matemagica-historico-${estadoJogo.usuarioAtual}`, JSON.stringify(estadoJogo.historico));
     }
 }
 
+function carregarHistoricoUsuario() {
+    if (estadoJogo.usuarioAtual) {
+        const dadosHistorico = localStorage.getItem(`matemagica-historico-${estadoJogo.usuarioAtual}`);
+        
+        if (dadosHistorico) {
+            try {
+                estadoJogo.historico = JSON.parse(dadosHistorico);
+            } catch (erro) {
+                console.error('Erro ao carregar histórico:', erro);
+            }
+        }
+    }
+}
+
+function salvarConquistas() {
+    localStorage.setItem(CHAVES_DB.conquistas, JSON.stringify(conquistas));
+}
+
+function carregarConquistas() {
+    const dadosConquistas = localStorage.getItem(CHAVES_DB.conquistas);
+    
+    if (dadosConquistas) {
+        try {
+            const conquistasSalvas = JSON.parse(dadosConquistas);
+            Object.assign(conquistas, conquistasSalvas);
+        } catch (erro) {
+            console.error('Erro ao carregar conquistas:', erro);
+        }
+    }
+}
+
+// ===== SISTEMA DE JOGOS COM VERIFICAÇÃO DE CONFLITOS =====
 function requererAutenticacao() {
     if (!estadoJogo.estaAutenticado) {
+        // Toast: Erro de autenticação - usuário não logado tentando acessar recurso
         mostrarToastErro('🔒 Você precisa fazer login primeiro!');
-        mostrarTela('login');
+        window.location.hash = 'login';
         return false;
     }
     return true;
 }
 
-// Função para mostrar uma tela específica
-function mostrarTela(nomeTela) {
-    // Esconder todas as telas
-    const telas = document.querySelectorAll('.screen');
-    telas.forEach(tela => {
-        tela.classList.remove('active');
-    });
-    
-    // Mostrar a tela solicitada
-    const telaAlvo = document.getElementById(nomeTela + '-screen');
-    if (telaAlvo) {
-        telaAlvo.classList.add('active');
-        estadoJogo.telaAtual = nomeTela;
-    }
-}
-
-// Função para voltar à tela inicial
 function irParaHome() {
     if (!requererAutenticacao()) return;
     
-    mostrarTela('home');
+    window.location.hash = 'home';
     atualizarExibicaoPontuacao();
     salvarProgressoUsuario();
 }
 
-// Função para iniciar um jogo
 function iniciarJogo(tipoJogo) {
     if (!requererAutenticacao()) return;
     
+    // Verificação de conflito (evitar múltiplos jogos)
+    if (jogoAtivo && jogoAtivo !== tipoJogo) {
+        // Toast: Aviso de conflito - tentativa de iniciar jogo enquanto outro está ativo
+        mostrarToastAviso('Finalize o jogo atual antes de iniciar outro!');
+        return;
+    }
+    
+    jogoAtivo = tipoJogo;
     estadoJogo.jogoAtual = tipoJogo;
-    mostrarTela(tipoJogo);
+    window.location.hash = tipoJogo;
     gerarProblema(tipoJogo);
     atualizarPontuacaoJogo(tipoJogo);
     
-    // Toast de boas-vindas específico do jogo
     const nomesJogos = {
         'adicao': 'Adição Mágica',
         'subtracao': 'Subtração Aventura', 
         'multiplicacao': 'Multiplicação Mistério'
     };
     
-    mostrarToastMatemagica(`🎮 Bem-vindo ao ${nomesJogos[tipoJogo]}! Boa sorte!`);
+    // Toast: Início de jogo - mensagem de boas-vindas ao jogo específico
+    mostrarToastSucesso(`🎮 Bem-vindo ao ${nomesJogos[tipoJogo]}! Boa sorte!`, tipoJogo);
     
-    // Limpar feedback e botões
     const feedback = document.getElementById('feedback-' + tipoJogo);
     const botaoVerificar = document.getElementById('verificar-' + tipoJogo);
     const botaoContinuar = document.getElementById('continuar-' + tipoJogo);
@@ -556,21 +669,21 @@ function iniciarJogo(tipoJogo) {
     }
 }
 
-// Função para gerar um problema matemático
 function gerarProblema(tipoJogo) {
     let num1, num2;
+    const nivel = estadoJogo.nivel;
     
     switch (tipoJogo) {
         case 'adicao':
-            num1 = Math.floor(Math.random() * 10) + 1;
-            num2 = Math.floor(Math.random() * 10) + 1;
+            num1 = Math.floor(Math.random() * (10 + nivel * 2)) + 1;
+            num2 = Math.floor(Math.random() * (10 + nivel * 2)) + 1;
             estadoJogo.problemas.adicao = { num1, num2, resposta: num1 + num2 };
             document.getElementById('numero1-adicao').textContent = num1;
             document.getElementById('numero2-adicao').textContent = num2;
             break;
             
         case 'subtracao':
-            num1 = Math.floor(Math.random() * 15) + 5;
+            num1 = Math.floor(Math.random() * (15 + nivel * 3)) + 5;
             num2 = Math.floor(Math.random() * num1) + 1;
             estadoJogo.problemas.subtracao = { num1, num2, resposta: num1 - num2 };
             document.getElementById('numero1-subtracao').textContent = num1;
@@ -578,8 +691,8 @@ function gerarProblema(tipoJogo) {
             break;
             
         case 'multiplicacao':
-            num1 = Math.floor(Math.random() * 10) + 1;
-            num2 = Math.floor(Math.random() * 10) + 1;
+            num1 = Math.floor(Math.random() * (8 + nivel)) + 1;
+            num2 = Math.floor(Math.random() * (8 + nivel)) + 1;
             estadoJogo.problemas.multiplicacao = { num1, num2, resposta: num1 * num2 };
             document.getElementById('numero1-multiplicacao').textContent = num1;
             document.getElementById('numero2-multiplicacao').textContent = num2;
@@ -587,7 +700,6 @@ function gerarProblema(tipoJogo) {
     }
 }
 
-// Função para verificar a resposta
 function verificarResposta(tipoJogo) {
     const entradaResposta = document.getElementById('resposta-' + tipoJogo);
     const respostaUsuario = parseInt(entradaResposta.value);
@@ -603,33 +715,51 @@ function verificarResposta(tipoJogo) {
         return;
     }
     
+    // Atualizar estatísticas
+    estadoJogo.historico.estatisticas.totalRespostas++;
+    
     if (respostaUsuario === respostaCorreta) {
-        // Resposta correta
         feedback.textContent = '🎉 Parabéns! Resposta correta!';
         feedback.className = 'feedback correct';
         
-        // Adicionar pontos
+        estadoJogo.historico.estatisticas.respostasCorretas++;
+        
         const pontos = tipoJogo === 'multiplicacao' ? 15 : (tipoJogo === 'subtracao' ? 12 : 10);
         estadoJogo.pontuacao += pontos;
         
-        // Verificar se subiu de nível
         const novoNivel = Math.floor(estadoJogo.pontuacao / 100) + 1;
         if (novoNivel > estadoJogo.nivel) {
             estadoJogo.nivel = novoNivel;
             feedback.textContent += ` 🆙 Você subiu para o nível ${estadoJogo.nivel}!`;
+            
+            // Toast: Subiu de nível - celebração de progresso
             mostrarToastSucesso(`🎊 Parabéns! Você subiu para o nível ${estadoJogo.nivel}!`, tipoJogo);
+            
+            // Verificar conquista de mestre
+            conquistas.mestre.progresso = estadoJogo.nivel;
+            verificarConquistas();
         } else {
+            // Toast: Resposta correta - feedback positivo de acerto
             mostrarToastSucesso(`🎯 Resposta correta! +${pontos} pontos!`, tipoJogo);
         }
+        
+        // Atualizar conquistas
+        conquistas.iniciante.progresso++;
+        if (tipoJogo === 'adicao') {
+            conquistas.adicaoExpert.progresso++;
+        }
+        verificarConquistas();
         
         atualizarExibicaoPontuacao();
         atualizarPontuacaoJogo(tipoJogo);
         salvarProgressoUsuario();
+        salvarHistoricoUsuario();
         
     } else {
-        // Resposta incorreta
         feedback.textContent = `❌ Ops! A resposta correta é ${respostaCorreta}. Tente novamente!`;
         feedback.className = 'feedback incorrect';
+        
+        // Toast: Resposta incorreta - feedback educativo com resposta correta
         mostrarToastErro(`💭 A resposta correta era ${respostaCorreta}. Continue tentando!`, tipoJogo);
     }
     
@@ -638,7 +768,6 @@ function verificarResposta(tipoJogo) {
     botaoContinuar.classList.remove('hidden');
 }
 
-// Função para próximo problema
 function proximoProblema(tipoJogo) {
     gerarProblema(tipoJogo);
     
@@ -654,7 +783,76 @@ function proximoProblema(tipoJogo) {
     entradaResposta.focus();
 }
 
-// Função para atualizar a exibição da pontuação
+function finalizarJogo() {
+    jogoAtivo = null;
+    estadoJogo.jogoAtual = null;
+}
+
+// ===== SISTEMA DE CONQUISTAS =====
+function verificarConquistas() {
+    Object.keys(conquistas).forEach(chave => {
+        const conquista = conquistas[chave];
+        if (!conquista.obtida && conquista.progresso >= conquista.meta) {
+            conquista.obtida = true;
+            
+            // Toast: Conquista desbloqueada - celebração de nova conquista
+            mostrarToastSucesso(`🎉 Conquista desbloqueada: ${conquista.nome}!`);
+            salvarConquistas();
+            
+            // Adicionar ao histórico de conquistas
+            if (!estadoJogo.historico.conquistas.includes(conquista.id)) {
+                estadoJogo.historico.conquistas.push(conquista.id);
+                salvarHistoricoUsuario();
+            }
+        }
+    });
+}
+
+// ===== SISTEMA DE HISTÓRICO E ESTATÍSTICAS =====
+function registrarSessao() {
+    if (estadoJogo.tempoInicioSessao) {
+        const duracao = Date.now() - estadoJogo.tempoInicioSessao;
+        const sessao = {
+            data: new Date().toISOString(),
+            jogo: estadoJogo.jogoAtual,
+            pontuacao: estadoJogo.pontuacao,
+            nivel: estadoJogo.nivel,
+            duracao: duracao
+        };
+        
+        estadoJogo.historico.sessoes.push(sessao);
+        estadoJogo.historico.estatisticas.jogosCompletos++;
+        salvarHistoricoUsuario();
+    }
+}
+
+function carregarHistoricoJogos() {
+    // Implementar exibição do histórico na tela home
+    const containerHistorico = document.getElementById('historico-jogos');
+    if (containerHistorico && estadoJogo.historico.sessoes.length > 0) {
+        const ultimasSessoes = estadoJogo.historico.sessoes.slice(-5).reverse();
+        containerHistorico.innerHTML = `
+            <h3>📊 Últimas Sessões</h3>
+            ${ultimasSessoes.map(sessao => `
+                <div class="sessao-item">
+                    <span>${new Date(sessao.data).toLocaleDateString()}</span>
+                    <span>${sessao.jogo}</span>
+                    <span>+${sessao.pontuacao} pts</span>
+                </div>
+            `).join('')}
+        `;
+    }
+}
+
+// ===== FUNÇÕES DE INTERFACE =====
+function atualizarExibicaoUsuario() {
+    if (estadoJogo.usuarioAtual) {
+        const elementoNomeUsuario = document.getElementById('usuario-atual');
+        const nomeExibicao = perfisUsuario[estadoJogo.usuarioAtual] || estadoJogo.usuarioAtual;
+        elementoNomeUsuario.textContent = nomeExibicao;
+    }
+}
+
 function atualizarExibicaoPontuacao() {
     const elementoPontuacao = document.getElementById('pontuacao');
     const elementoNivel = document.getElementById('nivel');
@@ -663,7 +861,6 @@ function atualizarExibicaoPontuacao() {
     if (elementoNivel) elementoNivel.textContent = estadoJogo.nivel;
 }
 
-// Função para atualizar a pontuação do jogo específico
 function atualizarPontuacaoJogo(tipoJogo) {
     const elementoPontuacaoJogo = document.getElementById('pontuacao-' + tipoJogo);
     if (elementoPontuacaoJogo) {
@@ -671,9 +868,8 @@ function atualizarPontuacaoJogo(tipoJogo) {
     }
 }
 
-// Event listeners para Enter nos formulários
+// ===== EVENT LISTENERS PARA ENTER =====
 document.addEventListener('DOMContentLoaded', function() {
-    // Login form
     const entradasLogin = ['usuario', 'senha'];
     entradasLogin.forEach(idInput => {
         const input = document.getElementById(idInput);
@@ -686,7 +882,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Register form
     const entradasCadastro = ['usuario-cadastro', 'senha-cadastro', 'confirmar-senha'];
     entradasCadastro.forEach(idInput => {
         const input = document.getElementById(idInput);
@@ -699,7 +894,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Game answer inputs
     const tiposJogo = ['adicao', 'subtracao', 'multiplicacao'];
     tiposJogo.forEach(tipoJogo => {
         const input = document.getElementById('resposta-' + tipoJogo);
@@ -720,3 +914,31 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// ===== BACKUP AUTOMÁTICO =====
+function fazerBackup() {
+    const backup = {
+        data: new Date().toISOString(),
+        estado: estadoJogo,
+        usuario: estadoJogo.usuarioAtual
+    };
+    
+    localStorage.setItem('matemagica_backup', JSON.stringify(backup));
+}
+
+function restaurarBackup() {
+    const backup = localStorage.getItem('matemagica_backup');
+    if (backup) {
+        try {
+            const dados = JSON.parse(backup);
+            Object.assign(estadoJogo, dados.estado);
+            
+            // Toast: Backup restaurado - confirmação de recuperação de dados
+            mostrarToastSucesso('Progresso restaurado do backup!');
+        } catch (erro) {
+            console.error('Erro ao restaurar backup:', erro);
+        }
+    }
+}
+
+// Fazer backup a cada 5 minutos
+setInterval(fazerBackup, 5 * 60 * 1000);

@@ -56,7 +56,7 @@ body {
 }
 
 .subtitle {
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(27, 26, 26, 0.9);
     font-size: 1.125rem;
 }
 
@@ -92,7 +92,7 @@ body {
 }
 
 .speech-bubble {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(235, 24, 24, 0.2);
     backdrop-filter: blur(10px);
     border-radius: 1rem;
     padding: 1rem;
@@ -100,19 +100,19 @@ body {
 }
 
 .speech-text {
-    color: white;
+    color: rgb(37, 36, 36);
     font-weight: 600;
     margin-bottom: 0.25rem;
 }
 
 .speech-subtext {
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(30, 28, 28, 0.9);
     font-size: 0.875rem;
 }
 
 /* Status do jogador */
 .player-status {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgb(222, 64, 64);
     backdrop-filter: blur(10px);
     border-radius: 1rem;
     padding: 1rem;
@@ -133,7 +133,7 @@ body {
 }
 
 .status-text {
-    color: white;
+    color: rgb(40, 2, 2);
     font-weight: 700;
 }
 

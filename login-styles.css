@@ -29,6 +29,7 @@
         opacity: 0;
         transform: scale(0.9);
     }
+
     to {
         opacity: 1;
         transform: scale(1);
@@ -123,7 +124,8 @@
     font-size: 1rem;
 }
 
-.auth-form-input, .auth-form-select {
+.auth-form-input,
+.auth-form-select {
     width: 100%;
     padding: 15px 20px;
     border: 2px solid #ddd;
@@ -138,14 +140,16 @@
     color: #aaa;
 }
 
-.auth-form-input:focus, .auth-form-select:focus {
+.auth-form-input:focus,
+.auth-form-select:focus {
     border-color: #FF6B6B;
     box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.2);
     outline: none;
     background-color: #fff;
 }
 
-.auth-error, .auth-success {
+.auth-error,
+.auth-success {
     border-radius: 8px;
     padding: 10px;
     margin-top: -10px;
@@ -204,7 +208,8 @@
 }
 
 /* Elementos de fundo decorativos */
-.auth-screen::before, .auth-screen::after {
+.auth-screen::before,
+.auth-screen::after {
     content: '';
     position: absolute;
     background: rgba(255, 255, 255, 0.1);
@@ -230,13 +235,27 @@
 }
 
 @keyframes float1 {
-    0%, 100% { transform: translate(0, 0); }
-    50% { transform: translate(20px, 30px); }
+
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+
+    50% {
+        transform: translate(20px, 30px);
+    }
 }
 
 @keyframes float2 {
-    0%, 100% { transform: translate(0, 0); }
-    50% { transform: translate(-30px, -20px); }
+
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+
+    50% {
+        transform: translate(-30px, -20px);
+    }
 }
 
 /* Responsividade para telas menores */
@@ -276,7 +295,8 @@
         font-size: 0.9rem;
     }
 
-    .auth-form-input, .auth-form-select {
+    .auth-form-input,
+    .auth-form-select {
         padding: 12px 15px;
         font-size: 1rem;
     }
